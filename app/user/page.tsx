@@ -8,8 +8,7 @@ import toast from "react-hot-toast";
 import Swal from "sweetalert2";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
-import { ArrowPathIcon } from '@heroicons/react/24/outline';
-import { BookOpenIcon, ClockIcon } from '@heroicons/react/24/outline';
+import { ArrowPathIcon, BookOpenIcon, ClockIcon, UserCircleIcon, CheckCircleIcon, PlusIcon, ExclamationCircleIcon, BookmarkIcon } from '@heroicons/react/24/outline';
 import ProfileModal from "@/components/ProfileModal";
 
 interface Book {
@@ -349,70 +348,87 @@ const UserDashboard = () => {
       : books;
 
   return (
-    <div className="min-h-screen bg-gray-50">
-      {/* Header */}
-      <header className="bg-white shadow-sm">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
-          <div className="flex justify-between items-center">
+    <div className="min-h-screen bg-slate-50">
+      {/* Top Navigation Bar */}
+      <nav className="bg-white border-b border-slate-200">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="flex justify-between h-16">
+            <div className="flex items-center">
+              <h1 className="text-xl font-semibold text-slate-900">Digital Library Hub</h1>
+            </div>
+            <div className="flex items-center">
+              <button
+                onClick={() => setShowProfileModal(true)}
+                className="p-2 text-slate-500 hover:text-slate-700 rounded-full hover:bg-slate-100"
+                title="My Profile"
+              >
+                <UserCircleIcon className="h-6 w-6" />
+              </button>
+            </div>
+          </div>
+        </div>
+      </nav>
+
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
+        {/* Welcome Section */}
+        <div className="mb-8">
+          <div className="flex items-center justify-between mb-4">
             <div className="flex items-center space-x-4">
               <button 
                 onClick={() => setShowProfileModal(true)}
-                className="h-12 w-12 rounded-full bg-gradient-to-r from-gray-600 to-gray-700 flex items-center justify-center hover:from-gray-700 hover:to-gray-800 transition-all duration-200 shadow-md"
-                title="Update Profile"
+                className="h-14 w-14 rounded-xl bg-gradient-to-br from-indigo-500 to-indigo-600 flex items-center justify-center hover:from-indigo-600 hover:to-indigo-700 transition-all duration-200 shadow-lg hover:shadow-indigo-500/20"
+                title="Update Your Profile"
               >
                 {user?.profile_image ? (
                   <img 
                     src={`${process.env.NEXT_PUBLIC_API_URL}/storage/${user.profile_image}`} 
                     alt={user.name}
-                    className="h-12 w-12 rounded-full object-cover ring-2 ring-white"
+                    className="h-14 w-14 rounded-xl object-cover ring-2 ring-indigo-500/20"
                     onError={(e) => {
                       e.currentTarget.src = `https://ui-avatars.com/api/?name=${encodeURIComponent(user.name)}&background=4B5563&color=fff`;
                     }}
                   />
                 ) : (
-                  <span className="text-white text-lg font-medium">
+                  <span className="text-white text-xl font-medium">
                     {user?.name?.charAt(0).toUpperCase()}
                   </span>
                 )}
               </button>
               <div>
-                <h1 className="text-2xl font-bold text-gray-900">
-                  Welcome, {user?.name}
-                </h1>
-                <p className="text-sm text-gray-500">Member since {formatDate(user?.created_at)}</p>
+                <h2 className="text-2xl font-bold text-slate-900">
+                  Hello, {user?.name}!
+                </h2>
+                <p className="text-sm text-slate-500">Member since {formatDate(user?.created_at)}</p>
               </div>
             </div>
-            <div className="flex items-center space-x-4">
-              <button
-                onClick={refreshData}
-                disabled={loading.refreshing}
-                className="inline-flex items-center px-3 py-2 border border-gray-300 shadow-sm text-sm leading-4 font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500 transition-colors duration-200"
-                title="Refresh Data"
-              >
-                <ArrowPathIcon className={`h-4 w-4 mr-2 ${loading.refreshing ? 'animate-spin' : ''}`} />
-                {loading.refreshing ? 'Refreshing...' : 'Refresh'}
-              </button>
-            </div>
+
+            <button
+              onClick={refreshData}
+              disabled={loading.refreshing}
+              className="inline-flex items-center px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl shadow-lg hover:shadow-indigo-500/10 transition-all duration-200"
+              title="Update Your Library Status"
+            >
+              <ArrowPathIcon className={`h-5 w-5 mr-2 ${loading.refreshing ? 'animate-spin' : ''}`} />
+              {loading.refreshing ? 'Updating...' : 'Refresh'}
+            </button>
           </div>
         </div>
-      </header>
 
-      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         {/* Quick Stats */}
-        <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3 mb-8">
-          <div className="bg-white overflow-hidden shadow-sm rounded-lg hover:shadow-md transition-all duration-200 border border-gray-100 transform hover:-translate-y-1">
+        <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 mb-8">
+          <div className="bg-white overflow-hidden shadow rounded-lg">
             <div className="p-6">
               <div className="flex items-center">
-                <div className="flex-shrink-0 bg-gradient-to-r from-primary-500 to-primary-600 rounded-lg p-3 shadow-lg">
+                <div className="flex-shrink-0 bg-indigo-500 rounded-xl p-3 shadow-lg">
                   <BookOpenIcon className="h-6 w-6 text-white" />
                 </div>
                 <div className="ml-4 w-0 flex-1">
                   <dl>
-                    <dt className="text-sm font-medium text-gray-500 truncate">Currently Borrowed</dt>
+                    <dt className="text-sm font-medium text-slate-500 truncate">Your Collection</dt>
                     <dd className="flex items-baseline">
-                      <div className="text-2xl font-semibold text-gray-900">{borrowedBooks.length}</div>
-                      <div className="ml-2 flex items-baseline text-sm font-semibold text-primary-600">
-                        <span>books</span>
+                      <div className="text-2xl font-semibold text-slate-900">{borrowedBooks.length}</div>
+                      <div className="ml-2 flex items-baseline text-sm font-semibold text-slate-500">
+                        <span>active loans</span>
                       </div>
                     </dd>
                   </dl>
@@ -421,45 +437,21 @@ const UserDashboard = () => {
             </div>
           </div>
 
-          <div className="bg-white overflow-hidden shadow-sm rounded-lg hover:shadow-md transition-all duration-200 border border-gray-100 transform hover:-translate-y-1">
+          <div className="bg-white overflow-hidden shadow rounded-lg">
             <div className="p-6">
               <div className="flex items-center">
-                <div className="flex-shrink-0 bg-gradient-to-r from-primary-500 to-primary-600 rounded-lg p-3 shadow-lg">
-                  <ClockIcon className="h-6 w-6 text-white" />
+                <div className="flex-shrink-0 bg-rose-500 rounded-xl p-3 shadow-lg">
+                  <ExclamationCircleIcon className="h-6 w-6 text-white" />
                 </div>
                 <div className="ml-4 w-0 flex-1">
                   <dl>
-                    <dt className="text-sm font-medium text-gray-500 truncate">Overdue Books</dt>
+                    <dt className="text-sm font-medium text-slate-500 truncate">Overdue Books</dt>
                     <dd className="flex items-baseline">
-                      <div className="text-2xl font-semibold text-gray-900">
+                      <div className="text-2xl font-semibold text-slate-900">
                         {borrowedBooks.filter(book => isBookOverdue(book.due_date)).length}
                       </div>
-                      <div className="ml-2 flex items-baseline text-sm font-semibold text-primary-600">
-                        <span>books</span>
-                      </div>
-                    </dd>
-                  </dl>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          <div className="bg-white overflow-hidden shadow-sm rounded-lg hover:shadow-md transition-all duration-200 border border-gray-100 transform hover:-translate-y-1">
-            <div className="p-6">
-              <div className="flex items-center">
-                <div className="flex-shrink-0 bg-gradient-to-r from-primary-500 to-primary-600 rounded-lg p-3 shadow-lg">
-                  <svg className="h-6 w-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
-                  </svg>
-                </div>
-                <div className="ml-4 w-0 flex-1">
-                  <dl>
-                    <dt className="text-sm font-medium text-gray-500 truncate">Next Due Date</dt>
-                    <dd className="flex items-baseline">
-                      <div className="text-2xl font-semibold text-gray-900">
-                        {borrowedBooks.length > 0 
-                          ? formatDate(borrowedBooks[0].due_date)
-                          : 'No books borrowed'}
+                      <div className="ml-2 flex items-baseline text-sm font-semibold text-slate-500">
+                        <span>need attention</span>
                       </div>
                     </dd>
                   </dl>
@@ -469,89 +461,75 @@ const UserDashboard = () => {
           </div>
         </div>
 
-        {/* Helpful Tips */}
-        <div className="mb-8 bg-gradient-to-r from-blue-50 to-indigo-50 border border-blue-100 rounded-lg p-6 shadow-sm">
-          <h3 className="text-lg font-semibold text-blue-800 mb-3">Quick Tips</h3>
-          <ul className="text-sm text-blue-700 space-y-2">
+        {/* Reading Tips */}
+        <div className="mb-8 bg-white shadow rounded-lg p-6">
+          <h3 className="text-lg font-semibold text-slate-900 mb-3">Quick Guide</h3>
+          <ul className="text-sm text-slate-600 space-y-2">
             <li className="flex items-center">
-              <svg className="h-5 w-5 mr-2 text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
-              </svg>
-              You can borrow books for up to 7 days
+              <CheckCircleIcon className="h-5 w-5 mr-2 text-indigo-500" />
+              Books can be borrowed for up to 7 days
             </li>
             <li className="flex items-center">
-              <svg className="h-5 w-5 mr-2 text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
-              </svg>
-              Return books on time to avoid overdue fees
+              <CheckCircleIcon className="h-5 w-5 mr-2 text-indigo-500" />
+              Return books on time to maintain good standing
             </li>
             <li className="flex items-center">
-              <svg className="h-5 w-5 mr-2 text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
-              </svg>
-              Use the refresh button to update your book status
+              <CheckCircleIcon className="h-5 w-5 mr-2 text-indigo-500" />
+              Use the refresh button to update your reading status
             </li>
             <li className="flex items-center">
-              <svg className="h-5 w-5 mr-2 text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
-              </svg>
-              Click on your profile picture to update your information
+              <CheckCircleIcon className="h-5 w-5 mr-2 text-indigo-500" />
+              Click your profile picture to update your information
             </li>
           </ul>
         </div>
 
         {/* Tabs */}
-        <div className="border-b border-gray-200 mb-8">
+        <div className="border-b border-slate-200 mb-8">
           <nav className="-mb-px flex space-x-8">
             <button
               onClick={() => setActiveTab("all")}
               className={`${
                 activeTab === "all"
-                  ? "border-primary-500 text-primary-600"
-                  : "border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300"
+                  ? "border-indigo-500 text-indigo-600"
+                  : "border-transparent text-slate-500 hover:text-slate-700 hover:border-slate-300"
               } whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm transition-colors duration-200 flex items-center`}
               disabled={loading.books || loading.borrowed}
             >
-              <svg className="h-5 w-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
-              </svg>
+              <BookOpenIcon className="h-5 w-5 mr-2" />
               All Books
               {loading.books && (
-                <span className="ml-2 inline-block animate-spin rounded-full h-3 w-3 border-2 border-gray-300 border-t-primary-600"></span>
+                <span className="ml-2 inline-block animate-spin rounded-full h-3 w-3 border-2 border-indigo-600 border-t-indigo-400"></span>
               )}
             </button>
             <button
               onClick={() => setActiveTab("available")}
               className={`${
                 activeTab === "available"
-                  ? "border-primary-500 text-primary-600"
-                  : "border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300"
+                  ? "border-indigo-500 text-indigo-600"
+                  : "border-transparent text-slate-500 hover:text-slate-700 hover:border-slate-300"
               } whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm transition-colors duration-200 flex items-center`}
               disabled={loading.books || loading.borrowed}
             >
-              <svg className="h-5 w-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
-              </svg>
-              Available Books
+              <PlusIcon className="h-5 w-5 mr-2" />
+              Available Now
               {loading.books && (
-                <span className="ml-2 inline-block animate-spin rounded-full h-3 w-3 border-2 border-gray-300 border-t-primary-600"></span>
+                <span className="ml-2 inline-block animate-spin rounded-full h-3 w-3 border-2 border-indigo-600 border-t-indigo-400"></span>
               )}
             </button>
             <button
               onClick={() => setActiveTab("borrowed")}
               className={`${
                 activeTab === "borrowed"
-                  ? "border-primary-500 text-primary-600"
-                  : "border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300"
+                  ? "border-indigo-500 text-indigo-600"
+                  : "border-transparent text-slate-500 hover:text-slate-700 hover:border-slate-300"
               } whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm transition-colors duration-200 flex items-center`}
               disabled={loading.borrowed}
             >
-              <svg className="h-5 w-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
-              </svg>
-              My Borrowed Books
+              <BookmarkIcon className="h-5 w-5 mr-2" />
+              My Books
               {loading.borrowed && (
-                <span className="ml-2 inline-block animate-spin rounded-full h-3 w-3 border-2 border-gray-300 border-t-primary-600"></span>
+                <span className="ml-2 inline-block animate-spin rounded-full h-3 w-3 border-2 border-indigo-600 border-t-indigo-400"></span>
               )}
             </button>
           </nav>
@@ -559,92 +537,86 @@ const UserDashboard = () => {
 
         {/* Book List or Borrowed Books Table */}
         {activeTab !== "borrowed" ? (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4">
             {loading.books ? (
               <div className="col-span-full">
-                <div className="bg-white shadow-sm rounded-lg p-6 text-center">
-                  <div className="animate-spin rounded-full h-8 w-8 border-t-2 border-b-2 border-primary-600 mx-auto"></div>
-                  <p className="mt-4 text-gray-600">Loading books...</p>
+                <div className="bg-white rounded-xl p-6 text-center">
+                  <div className="animate-spin rounded-full h-8 w-8 border-t-2 border-b-2 border-indigo-600 mx-auto"></div>
+                  <p className="mt-4 text-slate-500">Loading your reading options...</p>
                 </div>
               </div>
             ) : filteredBooks.length === 0 ? (
               <div className="col-span-full">
-                <div className="bg-white shadow-sm rounded-lg p-6 text-center">
-                  <svg className="h-12 w-12 text-gray-400 mx-auto mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
-                  </svg>
-                  <p className="text-gray-500">No books found.</p>
+                <div className="bg-white rounded-xl p-6 text-center">
+                  <BookOpenIcon className="h-12 w-12 text-slate-400 mx-auto mb-4" />
+                  <p className="text-slate-500">No books available at the moment.</p>
                 </div>
               </div>
             ) : (
               filteredBooks.map(book => (
-                <div key={`book-${book.id}`} className="bg-white shadow-sm rounded-lg overflow-hidden hover:shadow-md transition-all duration-300 transform hover:-translate-y-1">
-                  <div className="p-6">
+                <div key={`book-${book.id}`} className="bg-white rounded-lg overflow-hidden hover:shadow-lg hover:shadow-indigo-500/10 transition-all duration-300 transform hover:-translate-y-1 border border-slate-200">
+                  <div className="p-4">
                     <div className="flex flex-col h-full">
                       {/* Book Title and Author */}
-                      <div className="mb-4">
-                        <h3 className="text-xl font-bold text-gray-900 line-clamp-2 mb-2 hover:text-primary-600 transition-colors duration-200">{book.title}</h3>
-                        <h4 className="text-sm font-medium text-gray-600">by {book.author}</h4>
+                      <div className="mb-2">
+                        <h3 className="text-base font-semibold text-slate-900 line-clamp-1 mb-1 hover:text-indigo-600 transition-colors duration-200">{book.title}</h3>
+                        <h4 className="text-xs font-medium text-slate-500 line-clamp-1">by {book.author}</h4>
                       </div>
 
                       {/* Book Description */}
-                      <div className="mt-2 text-sm text-gray-600 line-clamp-3 min-h-[4.5rem]">
+                      <div className="text-xs text-slate-600 line-clamp-2 min-h-[2.5rem] mb-2">
                         {book.description || 'No description available'}
                       </div>
 
                       {/* Book Details */}
-                      <div className="space-y-2 text-sm mt-4">
-                        <div className="flex items-center text-gray-600">
-                          <svg className="h-4 w-4 mr-2 text-primary-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z" />
-                          </svg>
-                          <span>{book.genre}</span>
+                      <div className="space-y-1 text-xs mt-2">
+                        <div className="flex items-center text-slate-500">
+                          <BookmarkIcon className="h-3 w-3 mr-1 text-indigo-500" />
+                          <span className="line-clamp-1">{book.genre}</span>
                         </div>
-                        <div className="flex items-center text-gray-600">
-                          <svg className="h-4 w-4 mr-2 text-primary-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
-                          </svg>
-                          <span>{book.available_copies} available / {book.total_copies} total</span>
+                        <div className="flex items-center text-slate-500">
+                          <PlusIcon className="h-3 w-3 mr-1 text-indigo-500" />
+                          <span>{book.available_copies}/{book.total_copies}</span>
                         </div>
                       </div>
                     </div>
                   </div>
 
                   {/* Action Button */}
-                  <div className="px-6 py-4 bg-gray-50 border-t border-gray-200">
+                  <div className="px-4 py-3 bg-slate-50 border-t border-slate-200">
                     {selectedBookId === book.id ? (
-                      <div className="space-y-4">
+                      <div className="space-y-3">
                         <div>
-                          <label className="block text-sm font-medium text-gray-700 mb-1">
-                            Select return date (max 1 week)
+                          <label className="block text-xs font-medium text-slate-500 mb-1">
+                            Return date (max 1 week)
                           </label>
                           <DatePicker
                             selected={dueDate}
                             onChange={(date) => setDueDate(date)}
                             minDate={new Date()}
                             maxDate={new Date(new Date().setDate(new Date().getDate() + 7))}
-                            className="w-full px-3 py-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500"
+                            className="w-full px-2 py-1.5 text-sm bg-white border border-slate-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 text-slate-900"
                             placeholderText="Select return date"
-                            dateFormat="MMMM d, yyyy"
+                            dateFormat="MMM d, yyyy"
                           />
                         </div>
-                        <div className="flex space-x-3">
+                        <div className="flex space-x-2">
                           <button
-                            className="flex-1 inline-flex justify-center items-center px-4 py-2 border border-transparent text-sm font-medium rounded-lg text-white bg-primary-600 hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500 transition-colors duration-200"
+                            className="flex-1 inline-flex justify-center items-center px-3 py-1.5 border border-transparent text-xs font-medium rounded-lg text-white bg-gradient-to-r from-indigo-600 to-indigo-700 hover:from-indigo-700 hover:to-indigo-800 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 transition-all duration-200 shadow-lg hover:shadow-indigo-500/20"
                             onClick={() => handleBorrow(book.id)}
                             disabled={loading.action}
                           >
                             {loading.action ? (
                               <>
-                                <span className="animate-spin mr-2 h-4 w-4 border-2 border-white border-t-transparent rounded-full"></span>
+                                <span className="animate-spin mr-1 h-3 w-3 border-2 border-white border-t-transparent rounded-full"></span>
                                 Processing...
                               </>
                             ) : (
-                              'Confirm Borrow'
+                              'Confirm'
                             )}
                           </button>
                           <button
-                            className="px-4 py-2 border border-gray-300 text-sm font-medium rounded-lg text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500 transition-colors duration-200"
+                            className="px-3 py-1.5 border border-slate-300 text-xs font-medium rounded-lg text-slate-700 bg-white hover:bg-slate-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 transition-all duration-200"
                             onClick={() => {
                               setSelectedBookId(null);
                               setDueDate(null);
@@ -656,15 +628,15 @@ const UserDashboard = () => {
                       </div>
                     ) : (
                       <button
-                        className={`w-full inline-flex justify-center items-center px-4 py-2.5 border border-transparent text-sm font-medium rounded-lg transition-all duration-200 ${
+                        className={`w-full inline-flex justify-center items-center px-3 py-1.5 border border-transparent text-xs font-medium rounded-lg transition-all duration-200 ${
                           book.available_copies > 0
-                            ? 'text-white bg-primary-600 hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500 transform hover:-translate-y-0.5'
-                            : 'text-gray-400 bg-gray-100 cursor-not-allowed'
+                            ? 'text-white bg-gradient-to-r from-indigo-600 to-indigo-700 hover:from-indigo-700 hover:to-indigo-800 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 transform hover:-translate-y-0.5 shadow-lg hover:shadow-indigo-500/20'
+                            : 'text-slate-400 bg-slate-100 cursor-not-allowed'
                         }`}
                         onClick={() => book.available_copies > 0 && setSelectedBookId(book.id)}
                         disabled={book.available_copies <= 0 || loading.action}
                       >
-                        {book.available_copies > 0 ? 'Borrow Book' : 'Unavailable'}
+                        {book.available_copies > 0 ? 'Borrow' : 'Unavailable'}
                       </button>
                     )}
                   </div>
@@ -673,56 +645,54 @@ const UserDashboard = () => {
             )}
           </div>
         ) : (
-          <div className="bg-white shadow-sm rounded-lg overflow-hidden">
+          <div className="bg-white shadow rounded-lg overflow-hidden">
             <div className="overflow-x-auto">
-              <table className="min-w-full divide-y divide-gray-200">
-                <thead className="bg-gray-50">
+              <table className="min-w-full divide-y divide-slate-200">
+                <thead className="bg-slate-50">
                   <tr>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Title</th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Author</th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Action</th>
+                    <th className="px-6 py-3 text-left text-xs font-medium text-slate-500 uppercase tracking-wider">Title</th>
+                    <th className="px-6 py-3 text-left text-xs font-medium text-slate-500 uppercase tracking-wider">Author</th>
+                    <th className="px-6 py-3 text-left text-xs font-medium text-slate-500 uppercase tracking-wider">Status</th>
+                    <th className="px-6 py-3 text-left text-xs font-medium text-slate-500 uppercase tracking-wider">Action</th>
                   </tr>
                 </thead>
-                <tbody className="bg-white divide-y divide-gray-200">
+                <tbody className="bg-white divide-y divide-slate-200">
                   {loading.borrowed ? (
                     <tr>
                       <td colSpan={4} className="px-6 py-4 text-center">
                         <div className="flex justify-center items-center space-x-2">
-                          <div className="animate-spin rounded-full h-5 w-5 border-2 border-gray-300 border-t-primary-600"></div>
-                          <span className="text-gray-600">Loading borrowed books...</span>
+                          <div className="animate-spin rounded-full h-5 w-5 border-2 border-indigo-600 border-t-indigo-400"></div>
+                          <span className="text-slate-500">Loading your reading list...</span>
                         </div>
                       </td>
                     </tr>
                   ) : borrowedBooks.length === 0 ? (
                     <tr>
-                      <td colSpan={4} className="px-6 py-4 text-center text-gray-500">
+                      <td colSpan={4} className="px-6 py-4 text-center text-slate-500">
                         <div className="flex flex-col items-center justify-center py-8">
-                          <svg className="h-12 w-12 text-gray-400 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
-                          </svg>
-                          <p>You haven't borrowed any books yet.</p>
+                          <BookOpenIcon className="h-12 w-12 text-slate-400 mb-4" />
+                          <p>Your reading list is empty. Start exploring our collection!</p>
                         </div>
                       </td>
                     </tr>
                   ) : (
                     borrowedBooks.map(book => (
-                      <tr key={book.unique_key} className="hover:bg-gray-50 transition-colors duration-200">
-                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900 font-medium">{book.title}</td>
-                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{book.author}</td>
+                      <tr key={book.unique_key} className="hover:bg-slate-50">
+                        <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-slate-900">{book.title}</td>
+                        <td className="px-6 py-4 whitespace-nowrap text-sm text-slate-500">{book.author}</td>
                         <td className="px-6 py-4 whitespace-nowrap">
                           <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
                             book.status === 'returned' 
-                              ? 'bg-green-100 text-green-800'
-                              : 'bg-blue-100 text-blue-800'
+                              ? 'bg-emerald-100 text-emerald-800'
+                              : 'bg-amber-100 text-amber-800'
                           }`}>
-                            {book.status === 'returned' ? 'Returned' : 'Borrowed'}
+                            {book.status === 'returned' ? 'Returned' : 'Currently Reading'}
                           </span>
                         </td>
                         <td className="px-6 py-4 whitespace-nowrap text-sm">
                           {book.status !== 'returned' ? (
                             <button
-                              className="inline-flex items-center px-3 py-1.5 border border-transparent text-xs font-medium rounded-md text-white bg-primary-600 hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500 transition-all duration-200 transform hover:-translate-y-0.5"
+                              className="inline-flex items-center px-3 py-1.5 border border-transparent text-xs font-medium rounded-lg text-white bg-gradient-to-r from-indigo-600 to-indigo-700 hover:from-indigo-700 hover:to-indigo-800 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 transition-all duration-200 shadow-lg hover:shadow-indigo-500/20"
                               onClick={() => handleReturn(book.transaction_id, book.title)}
                               disabled={loading.action}
                             >
@@ -737,7 +707,7 @@ const UserDashboard = () => {
                             </button>
                           ) : (
                             <button 
-                              className="inline-flex items-center px-3 py-1.5 border border-gray-300 text-xs font-medium rounded-md text-gray-700 bg-gray-100 cursor-not-allowed"
+                              className="inline-flex items-center px-3 py-1.5 border border-slate-300 text-xs font-medium rounded-lg text-slate-400 bg-slate-100 cursor-not-allowed"
                               disabled
                             >
                               Already Returned
@@ -752,7 +722,7 @@ const UserDashboard = () => {
             </div>
           </div>
         )}
-      </main>
+      </div>
 
       {/* Profile Modal */}
       {showProfileModal && (

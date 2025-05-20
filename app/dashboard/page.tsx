@@ -19,7 +19,32 @@ import {
   HomeIcon,
   ChartBarIcon,
   CogIcon,
-  UserCircleIcon
+  UserCircleIcon,
+  XMarkIcon,
+  BookOpenIcon as BookIcon,
+  UsersIcon,
+  ClockIcon as ClockOutlineIcon,
+  ExclamationCircleIcon,
+  MagnifyingGlassIcon as SearchIcon,
+  PlusCircleIcon,
+  PencilSquareIcon,
+  TrashIcon as TrashOutlineIcon,
+  ArrowPathIcon as ArrowPathOutlineIcon,
+  HomeIcon as HomeOutlineIcon,
+  ChartBarIcon as ChartBarOutlineIcon,
+  CogIcon as CogOutlineIcon,
+  UserCircleIcon as UserCircleOutlineIcon,
+  XMarkIcon as XMarkOutlineIcon,
+  BookmarkIcon,
+  UserPlusIcon,
+  BookmarkSlashIcon,
+  CalendarIcon,
+  CheckCircleIcon,
+  XCircleIcon,
+  PencilSquareIcon as EditIcon,
+  TrashIcon as DeleteIcon,
+  DocumentDuplicateIcon,
+  ArchiveBoxIcon
 } from '@heroicons/react/24/outline';
 import ProfileModal from "@/components/ProfileModal";
 
@@ -130,15 +155,12 @@ const AdminDashboard = () => {
         router.push("/auth");
       } else if (user?.role !== 'admin') {
         router.push("/");
+      } else {
+        // Only fetch data if we're authenticated and have admin role
+        fetchDashboardStats();
       }
     }
   }, [authToken, isLoading, router, user]);
-
-  useEffect(() => {
-    if (authToken && user?.role === 'admin') {
-      fetchDashboardStats();
-    }
-  }, [authToken, user]);
 
   useEffect(() => {
     if (authToken && user?.role === 'admin') {
@@ -484,748 +506,589 @@ const AdminDashboard = () => {
     }
   };
 
-  if (isLoading || !authToken || user?.role !== 'admin') {
+  if (isLoading) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-gray-50">
+      <div className="min-h-screen flex items-center justify-center bg-violet-50">
         <div className="flex flex-col items-center space-y-4">
-          <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-indigo-600"></div>
-          <p className="text-gray-600 font-medium">Loading dashboard...</p>
+          <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-violet-600"></div>
+          <p className="text-violet-600 font-medium">Loading dashboard...</p>
         </div>
       </div>
     );
   }
 
-  return (
-    <div className="min-h-screen bg-gray-50">
-      <div className="flex">
-        {/* Sidebar */}
-        <div className="w-64 min-h-screen bg-white shadow-lg border-r border-gray-200">
-          <div className="p-6">
-            <div className="flex items-center space-x-4 mb-8">
-              <div className="h-12 w-12 rounded-full bg-gradient-to-r from-gray-600 to-gray-700 flex items-center justify-center shadow-md">
-                {user?.profile_image ? (
-                  <img 
-                    src={`${process.env.NEXT_PUBLIC_API_URL}/storage/${user.profile_image}`} 
-                    alt={user.name}
-                    className="h-12 w-12 rounded-full object-cover ring-2 ring-white"
-                    onError={(e) => {
-                      e.currentTarget.src = `https://ui-avatars.com/api/?name=${encodeURIComponent(user.name)}&background=4B5563&color=fff`;
-                    }}
-                  />
-                ) : (
-                  <span className="text-white text-lg font-medium">
-                    {user?.name?.charAt(0).toUpperCase()}
-                  </span>
-                )}
-              </div>
-              <div>
-                <p className="text-sm font-semibold text-gray-900">{user?.name}</p>
-                <p className="text-xs text-gray-500 bg-gray-100 px-2 py-1 rounded-full inline-block">{user?.role}</p>
-              </div>
-            </div>
+  if (!authToken) {
+    router.push("/auth");
+    return null;
+  }
 
-            <nav className="space-y-1">
+  if (user?.role !== 'admin') {
+    router.push("/");
+    return null;
+  }
+
+  return (
+    <div className="min-h-screen bg-slate-50">
+      {/* Top Navigation Bar */}
+      <nav className="bg-white border-b border-slate-200">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="flex justify-between h-16">
+            <div className="flex items-center">
+              <h1 className="text-xl font-semibold text-slate-900">Digital Library Hub</h1>
+            </div>
+            <div className="flex items-center space-x-4">
               <button
-                onClick={() => setActiveTab("dashboard")}
-                className={`w-full flex items-center px-4 py-3 text-sm font-medium rounded-lg transition-all duration-200 ${
-                  activeTab === "dashboard"
-                    ? "bg-gradient-to-r from-gray-600 to-gray-700 text-white shadow-md"
-                    : "text-gray-600 hover:bg-gray-50 hover:text-gray-900"
-                }`}
+                onClick={() => setShowProfileModal(true)}
+                className="p-2 text-slate-500 hover:text-slate-700 rounded-full hover:bg-slate-100"
+                title="My Profile"
               >
-                <HomeIcon className="mr-3 h-5 w-5" />
-                Dashboard
+                <UserCircleOutlineIcon className="h-6 w-6" />
               </button>
-              <button
-                onClick={() => setActiveTab("books")}
-                className={`w-full flex items-center px-4 py-3 text-sm font-medium rounded-lg transition-all duration-200 ${
-                  activeTab === "books"
-                    ? "bg-gradient-to-r from-gray-600 to-gray-700 text-white shadow-md"
-                    : "text-gray-600 hover:bg-gray-50 hover:text-gray-900"
-                }`}
-              >
-                <BookOpenIcon className="mr-3 h-5 w-5" />
-                Books
-              </button>
-              <button
-                onClick={() => setActiveTab("users")}
-                className={`w-full flex items-center px-4 py-3 text-sm font-medium rounded-lg transition-all duration-200 ${
-                  activeTab === "users"
-                    ? "bg-gradient-to-r from-gray-600 to-gray-700 text-white shadow-md"
-                    : "text-gray-600 hover:bg-gray-50 hover:text-gray-900"
-                }`}
-              >
-                <UserGroupIcon className="mr-3 h-5 w-5" />
-                Users
-              </button>
-              <button
-                onClick={() => setActiveTab("transactions")}
-                className={`w-full flex items-center px-4 py-3 text-sm font-medium rounded-lg transition-all duration-200 ${
-                  activeTab === "transactions"
-                    ? "bg-gradient-to-r from-gray-600 to-gray-700 text-white shadow-md"
-                    : "text-gray-600 hover:bg-gray-50 hover:text-gray-900"
-                }`}
-              >
-                <ClockIcon className="mr-3 h-5 w-5" />
-                Transactions
-              </button>
+            </div>
+          </div>
+        </div>
+      </nav>
+
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
+        {/* Tab Navigation */}
+        <div className="mb-6">
+          <div className="border-b border-slate-200">
+            <nav className="-mb-px flex space-x-8">
+              {[
+                { id: "dashboard", label: "Home", icon: HomeOutlineIcon },
+                { id: "books", label: "Library", icon: BookOpenIcon },
+                { id: "users", label: "Members", icon: UserPlusIcon },
+                { id: "transactions", label: "Borrowings", icon: BookmarkSlashIcon }
+              ].map((tab) => (
+                <button
+                  key={tab.id}
+                  onClick={() => setActiveTab(tab.id as any)}
+                  className={`${
+                    activeTab === tab.id
+                      ? "border-indigo-500 text-indigo-600"
+                      : "border-transparent text-slate-500 hover:text-slate-700 hover:border-slate-300"
+                  } whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm flex items-center`}
+                >
+                  <tab.icon className="h-5 w-5 mr-2" />
+                  {tab.label}
+                </button>
+              ))}
             </nav>
           </div>
         </div>
 
-        {/* Main Content */}
-        <div className="flex-1 p-8">
-          {/* Header */}
-          <div className="mb-8">
-            <h1 className="text-2xl font-bold text-gray-900 bg-gradient-to-r from-gray-600 to-gray-700 bg-clip-text text-transparent">
-              {activeTab === "dashboard" && "Dashboard Overview"}
-              {activeTab === "books" && "Book Management"}
-              {activeTab === "users" && "User Management"}
-              {activeTab === "transactions" && "Transaction History"}
-            </h1>
-            <p className="mt-1 text-sm text-gray-500">
-              {activeTab === "dashboard" && "View your library statistics and recent activities"}
-              {activeTab === "books" && "Manage your library's book collection"}
-              {activeTab === "users" && "Manage library users and their accounts"}
-              {activeTab === "transactions" && "Track book borrowing and returns"}
-            </p>
-          </div>
+        {/* Dashboard Content */}
+        {activeTab === "dashboard" && (
+          <div className="space-y-6">
+            {/* Stats Grid */}
+            <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-4">
+              <div className="bg-white overflow-hidden shadow rounded-lg">
+                <div className="p-5">
+                  <div className="flex items-center">
+                    <div className="flex-shrink-0 bg-indigo-500 rounded-md p-3">
+                      <BookIcon className="h-6 w-6 text-white" />
+                    </div>
+                    <div className="ml-5 w-0 flex-1">
+                      <dl>
+                        <dt className="text-sm font-medium text-slate-500 truncate">Total Books</dt>
+                        <dd className="text-lg font-semibold text-slate-900">{stats?.books_count}</dd>
+                      </dl>
+                    </div>
+                  </div>
+                </div>
+              </div>
 
-          {/* Dashboard Content */}
-          {activeTab === "dashboard" && (
-            <div className="space-y-6">
-              {/* Quick Stats */}
-              <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-4">
-                <div className="bg-white overflow-hidden shadow-lg rounded-xl hover:shadow-xl transition-all duration-200 border border-gray-100">
-                  <div className="p-6">
-                    <div className="flex items-center">
-                      <div className="flex-shrink-0 bg-gradient-to-r from-gray-600 to-gray-700 rounded-lg p-3 shadow-md">
-                        <BookOpenIcon className="h-6 w-6 text-white" />
-                      </div>
-                      <div className="ml-4 w-0 flex-1">
-                        <dl>
-                          <dt className="text-sm font-medium text-gray-500 truncate">Total Books</dt>
-                          <dd className="flex items-baseline">
-                            <div className="text-2xl font-semibold text-gray-900">{stats?.books_count}</div>
-                            <div className="ml-2 flex items-baseline text-sm font-semibold text-gray-600">
-                              <span className="sr-only">Borrowed</span>
-                              {stats?.transactions_count ? (
-                                <span>
-                                  {stats.transactions_count} books borrowed
-                                </span>
+              <div className="bg-white overflow-hidden shadow rounded-lg">
+                <div className="p-5">
+                  <div className="flex items-center">
+                    <div className="flex-shrink-0 bg-emerald-500 rounded-md p-3">
+                      <UserPlusIcon className="h-6 w-6 text-white" />
+                    </div>
+                    <div className="ml-5 w-0 flex-1">
+                      <dl>
+                        <dt className="text-sm font-medium text-slate-500 truncate">Total Members</dt>
+                        <dd className="text-lg font-semibold text-slate-900">{stats?.users_count}</dd>
+                      </dl>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div className="bg-white overflow-hidden shadow rounded-lg">
+                <div className="p-5">
+                  <div className="flex items-center">
+                    <div className="flex-shrink-0 bg-amber-500 rounded-md p-3">
+                      <BookmarkSlashIcon className="h-6 w-6 text-white" />
+                    </div>
+                    <div className="ml-5 w-0 flex-1">
+                      <dl>
+                        <dt className="text-sm font-medium text-slate-500 truncate">Active Loans</dt>
+                        <dd className="text-lg font-semibold text-slate-900">{stats?.transactions_count}</dd>
+                      </dl>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div className="bg-white overflow-hidden shadow rounded-lg">
+                <div className="p-5">
+                  <div className="flex items-center">
+                    <div className="flex-shrink-0 bg-rose-500 rounded-md p-3">
+                      <ExclamationCircleIcon className="h-6 w-6 text-white" />
+                    </div>
+                    <div className="ml-5 w-0 flex-1">
+                      <dl>
+                        <dt className="text-sm font-medium text-slate-500 truncate">Overdue Items</dt>
+                        <dd className="text-lg font-semibold text-slate-900">{stats?.overdue_count}</dd>
+                      </dl>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* Recent Activity */}
+            <div className="bg-white shadow rounded-lg">
+              <div className="px-4 py-5 sm:px-6 border-b border-slate-200">
+                <h3 className="text-lg font-medium text-slate-900">Latest Activities</h3>
+              </div>
+              <div className="px-4 py-5 sm:p-6">
+                <div className="flow-root">
+                  <ul className="-my-5 divide-y divide-slate-200">
+                    {stats?.recent_transactions.map((tx) => (
+                      <li key={tx.id} className="py-4">
+                        <div className="flex items-center space-x-4">
+                          <div className="flex-shrink-0">
+                            <div className={`h-8 w-8 rounded-full flex items-center justify-center ${
+                              tx.status === 'borrowed' ? 'bg-amber-100' : 'bg-emerald-100'
+                            }`}>
+                              {tx.status === 'borrowed' ? (
+                                <BookmarkSlashIcon className="h-5 w-5 text-amber-600" />
                               ) : (
-                                <span>No books borrowed</span>
+                                <CheckCircleIcon className="h-5 w-5 text-emerald-600" />
                               )}
                             </div>
-                          </dd>
-                        </dl>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-
-                <div className="bg-white overflow-hidden shadow-lg rounded-xl hover:shadow-xl transition-all duration-200 border border-gray-100">
-                  <div className="p-6">
-                    <div className="flex items-center">
-                      <div className="flex-shrink-0 bg-gradient-to-r from-gray-600 to-gray-700 rounded-lg p-3 shadow-md">
-                        <UserGroupIcon className="h-6 w-6 text-white" />
-                      </div>
-                      <div className="ml-4 w-0 flex-1">
-                        <dl>
-                          <dt className="text-sm font-medium text-gray-500 truncate">Total Users</dt>
-                          <dd className="flex items-baseline">
-                            <div className="text-2xl font-semibold text-gray-900">{stats?.users_count}</div>
-                            <div className="ml-2 flex items-baseline text-sm font-semibold text-gray-600">
-                              <span className="sr-only">Active</span>
-                              {stats?.transactions_count || 0} active borrowers
-                            </div>
-                          </dd>
-                        </dl>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-
-                <div className="bg-white overflow-hidden shadow-lg rounded-xl hover:shadow-xl transition-all duration-200 border border-gray-100">
-                  <div className="p-6">
-                    <div className="flex items-center">
-                      <div className="flex-shrink-0 bg-gradient-to-r from-gray-600 to-gray-700 rounded-lg p-3 shadow-md">
-                        <ClockIcon className="h-6 w-6 text-white" />
-                      </div>
-                      <div className="ml-4 w-0 flex-1">
-                        <dl>
-                          <dt className="text-sm font-medium text-gray-500 truncate">Active Borrows</dt>
-                          <dd className="flex items-baseline">
-                            <div className="text-2xl font-semibold text-gray-900">{stats?.transactions_count}</div>
-                            <div className="ml-2 flex items-baseline text-sm font-semibold text-gray-600">
-                              <span className="sr-only">Current</span>
-                              Currently borrowed
-                            </div>
-                          </dd>
-                        </dl>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-
-                <div className="bg-white overflow-hidden shadow-lg rounded-xl hover:shadow-xl transition-all duration-200 border border-gray-100">
-                  <div className="p-6">
-                    <div className="flex items-center">
-                      <div className="flex-shrink-0 bg-gradient-to-r from-gray-600 to-gray-700 rounded-lg p-3 shadow-md">
-                        <ExclamationTriangleIcon className="h-6 w-6 text-white" />
-                      </div>
-                      <div className="ml-4 w-0 flex-1">
-                        <dl>
-                          <dt className="text-sm font-medium text-gray-500 truncate">Overdue</dt>
-                          <dd className="flex items-baseline">
-                            <div className="text-2xl font-semibold text-gray-900">{stats?.overdue_count}</div>
-                            <div className="ml-2 flex items-baseline text-sm font-semibold text-gray-600">
-                              <span className="sr-only">Overdue</span>
-                              {stats?.overdue_count ? `${stats.overdue_count} books overdue` : 'No overdue books'}
-                            </div>
-                          </dd>
-                        </dl>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-
-              <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-                {/* Recent Activity */}
-                <div className="lg:col-span-2 bg-white shadow-lg rounded-xl border border-gray-100">
-                  <div className="px-6 py-4 border-b border-gray-200 flex justify-between items-center">
-                    <h3 className="text-lg font-semibold text-gray-900">Recent Activity</h3>
-                    <button
-                      onClick={() => setActiveTab("transactions")}
-                      className="text-sm text-gray-600 hover:text-gray-900 font-medium transition-colors duration-200"
-                    >
-                      View All
-                    </button>
-                  </div>
-                  <div className="p-6">
-                    <div className="flow-root">
-                      <ul className="divide-y divide-gray-200">
-                        {stats?.recent_transactions.map((tx) => (
-                          <li key={tx.id} className="py-4 hover:bg-gray-50 transition-colors duration-200 rounded-lg px-2">
-                            <div className="flex items-center space-x-4">
-                              <div className={`flex-shrink-0 h-10 w-10 rounded-full flex items-center justify-center shadow-md ${
-                                tx.status === 'borrowed' ? 'bg-gradient-to-r from-blue-500 to-cyan-600' : 'bg-gradient-to-r from-green-500 to-emerald-600'
-                              }`}>
-                                {tx.status === 'borrowed' ? (
-                                  <BookOpenIcon className="h-5 w-5 text-white" />
-                                ) : (
-                                  <svg className="h-5 w-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7" />
-                                  </svg>
-                                )}
-                              </div>
-                              <div className="flex-1 min-w-0">
-                                <p className="text-sm font-medium text-gray-900 truncate">
-                                  {tx.user_name}
-                                </p>
-                                <p className="text-sm text-gray-500">
-                                  {tx.status === 'borrowed' ? (
-                                    <span>borrowed <span className="font-medium text-gray-900">{tx.book_title}</span> (Due: {formatDate(tx.due_date)})</span>
-                                  ) : (
-                                    <span>returned <span className="font-medium text-gray-900">{tx.book_title}</span></span>
-                                  )}
-                                </p>
-                              </div>
-                              <div className="flex flex-col items-end">
-                                <span className={`inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium shadow-sm ${
-                                  tx.status === 'borrowed' 
-                                    ? 'bg-blue-100 text-blue-800' 
-                                    : 'bg-green-100 text-green-800'
-                                }`}>
-                                  {tx.status === 'borrowed' ? 'Borrowed' : 'Returned'}
-                                </span>
-                              </div>
-                            </div>
-                          </li>
-                        ))}
-                      </ul>
-                    </div>
-                  </div>
-                </div>
-
-                {/* Quick Actions */}
-                <div className="bg-white shadow-lg rounded-xl border border-gray-100">
-                  <div className="px-6 py-4 border-b border-gray-200">
-                    <h3 className="text-lg font-semibold text-gray-900">Quick Actions</h3>
-                  </div>
-                  <div className="p-6">
-                    <div className="space-y-4">
-                      <button
-                        onClick={() => setShowAddBookModal(true)}
-                        className="w-full flex items-center p-4 rounded-xl border border-gray-200 hover:border-gray-400 hover:bg-gray-50 transition-all duration-200"
-                      >
-                        <div className="flex-shrink-0 bg-gradient-to-r from-gray-600 to-gray-700 rounded-lg p-2">
-                          <PlusIcon className="h-6 w-6 text-white" />
+                          </div>
+                          <div className="flex-1 min-w-0">
+                            <p className="text-sm font-medium text-slate-900 truncate">
+                              {tx.user_name}
+                            </p>
+                            <p className="text-sm text-slate-500">
+                              {tx.status === 'borrowed' ? 'borrowed' : 'returned'} {tx.book_title}
+                            </p>
+                          </div>
+                          <div>
+                            <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
+                              tx.status === 'borrowed' ? 'bg-amber-100 text-amber-800' : 'bg-emerald-100 text-emerald-800'
+                            }`}>
+                              {tx.status}
+                            </span>
+                          </div>
                         </div>
-                        <div className="ml-4 text-left">
-                          <span className="block text-sm font-medium text-gray-900">Add New Book</span>
-                          <span className="block text-xs text-gray-500">Add a new book to the library collection</span>
-                        </div>
-                      </button>
-                      <button
-                        onClick={() => setActiveTab("users")}
-                        className="w-full flex items-center p-4 rounded-xl border border-gray-200 hover:border-gray-400 hover:bg-gray-50 transition-all duration-200"
-                      >
-                        <div className="flex-shrink-0 bg-gradient-to-r from-gray-600 to-gray-700 rounded-lg p-2">
-                          <UserGroupIcon className="h-6 w-6 text-white" />
-                        </div>
-                        <div className="ml-4 text-left">
-                          <span className="block text-sm font-medium text-gray-900">Manage Users</span>
-                          <span className="block text-xs text-gray-500">View and manage library user accounts</span>
-                        </div>
-                      </button>
-                    </div>
-                  </div>
+                      </li>
+                    ))}
+                  </ul>
                 </div>
               </div>
             </div>
-          )}
+          </div>
+        )}
 
-          {/* Books Tab Content */}
-          {activeTab === "books" && (
-            <div className="bg-white shadow rounded-lg">
-              <div className="px-6 py-4 border-b border-gray-200 flex justify-between items-center">
-                <h3 className="text-lg font-medium text-gray-900">Book Management</h3>
-                <button 
-                  onClick={() => setShowAddBookModal(true)}
-                  className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700"
-                >
-                  <PlusIcon className="h-5 w-5 mr-2" />
-                  Add Book
-                </button>
-              </div>
-              <div className="p-6">
-                <div className="mb-4">
-                  <div className="relative">
-                    <input
-                      type="text"
-                      className="block w-full pl-10 pr-3 py-2 border border-gray-300 rounded-md leading-5 bg-white placeholder-gray-500 focus:outline-none focus:ring-1 focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
-                      placeholder="Search books..."
-                      value={searchTerm.books}
-                      onChange={(e) => {
-                        setSearchTerm(prev => ({...prev, books: e.target.value}));
-                        fetchBooks(1, e.target.value);
-                      }}
-                    />
-                    <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                      <MagnifyingGlassIcon className="h-5 w-5 text-gray-400" />
-                    </div>
-                  </div>
-                </div>
-
-                {loading.books ? (
-                  <div className="flex justify-center items-center h-64">
-                    <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-indigo-600"></div>
-                  </div>
-                ) : books.length === 0 ? (
-                  <div className="bg-blue-50 border border-blue-200 text-blue-700 px-4 py-3 rounded relative" role="alert">
-                    No books found
-                  </div>
-                ) : (
-                  <div className="overflow-x-auto">
-                    <table className="min-w-full divide-y divide-gray-200">
-                      <thead className="bg-gray-50">
-                        <tr>
-                          <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Title</th>
-                          <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Author</th>
-                          <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Genre</th>
-                          <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Total Copies</th>
-                          <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Available</th>
-                          <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
-                        </tr>
-                      </thead>
-                      <tbody className="bg-white divide-y divide-gray-200">
-                        {books.map(book => (
-                          <tr key={book.id}>
-                            <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{book.title}</td>
-                            <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{book.author}</td>
-                            <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{book.genre}</td>
-                            <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{book.total_copies}</td>
-                            <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{book.available_copies}</td>
-                            <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
-                              <div className="flex space-x-3">
-                                <button
-                                  className="text-indigo-600 hover:text-indigo-900"
-                                  onClick={() => {
-                                    setCurrentBook(book);
-                                    setShowEditBookModal(true);
-                                  }}
-                                  disabled={loading.action}
-                                >
-                                  <PencilIcon className="h-5 w-5" />
-                                </button>
-                                <button
-                                  className="text-red-600 hover:text-red-900"
-                                  onClick={() => handleDeleteBook(book.id)}
-                                  disabled={loading.action}
-                                >
-                                  <TrashIcon className="h-5 w-5" />
-                                </button>
-                              </div>
-                            </td>
-                          </tr>
-                        ))}
-                      </tbody>
-                    </table>
-                  </div>
-                )}
-
-                {books.length > 0 && (
-                  <div className="mt-4 flex justify-center">
-                    <nav className="relative z-0 inline-flex rounded-md shadow-sm -space-x-px" aria-label="Pagination">
-                      <button
-                        onClick={() => fetchBooks(pagination.books.current_page - 1, searchTerm.books)}
-                        disabled={pagination.books.current_page === 1}
-                        className={`relative inline-flex items-center px-2 py-2 rounded-l-md border border-gray-300 bg-white text-sm font-medium ${
-                          pagination.books.current_page === 1 ? 'text-gray-300 cursor-not-allowed' : 'text-gray-500 hover:bg-gray-50'
-                        }`}
-                      >
-                        Previous
-                      </button>
-                      {Array.from({length: pagination.books.last_page}, (_, i) => i + 1).map(page => (
-                        <button
-                          key={page}
-                          onClick={() => fetchBooks(page, searchTerm.books)}
-                          className={`relative inline-flex items-center px-4 py-2 border border-gray-300 bg-white text-sm font-medium ${
-                            pagination.books.current_page === page
-                              ? 'z-10 bg-indigo-50 border-indigo-500 text-indigo-600'
-                              : 'text-gray-500 hover:bg-gray-50'
-                          }`}
-                        >
-                          {page}
-                        </button>
-                      ))}
-                      <button
-                        onClick={() => fetchBooks(pagination.books.current_page + 1, searchTerm.books)}
-                        disabled={pagination.books.current_page === pagination.books.last_page}
-                        className={`relative inline-flex items-center px-2 py-2 rounded-r-md border border-gray-300 bg-white text-sm font-medium ${
-                          pagination.books.current_page === pagination.books.last_page ? 'text-gray-300 cursor-not-allowed' : 'text-gray-500 hover:bg-gray-50'
-                        }`}
-                      >
-                        Next
-                      </button>
-                    </nav>
-                  </div>
-                )}
-              </div>
+        {/* Books Tab Content */}
+        {activeTab === "books" && (
+          <div className="bg-white shadow rounded-lg">
+            <div className="px-4 py-5 sm:px-6 border-b border-slate-200 flex justify-between items-center">
+              <h3 className="text-lg font-medium text-slate-900">Book Collection</h3>
+              <button
+                onClick={() => setShowAddBookModal(true)}
+                className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+              >
+                <PlusCircleIcon className="h-5 w-5 mr-2" />
+                Add New Book
+              </button>
             </div>
-          )}
-
-          {/* Users Tab Content */}
-          {activeTab === "users" && (
-            <div className="bg-white shadow rounded-lg">
-              <div className="px-6 py-4 border-b border-gray-200">
-                <h3 className="text-lg font-medium text-gray-900">User Management</h3>
-              </div>
-              <div className="p-6">
-                <div className="mb-4">
-                  <div className="relative">
-                    <input
-                      type="text"
-                      className="block w-full pl-10 pr-3 py-2 border border-gray-300 rounded-md leading-5 bg-white placeholder-gray-500 focus:outline-none focus:ring-1 focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
-                      placeholder="Search users..."
-                      value={searchTerm.users}
-                      onChange={(e) => {
-                        setSearchTerm(prev => ({...prev, users: e.target.value}));
-                        fetchUsers(1, e.target.value);
-                      }}
-                    />
-                    <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                      <MagnifyingGlassIcon className="h-5 w-5 text-gray-400" />
-                    </div>
+            <div className="px-4 py-5 sm:p-6">
+              <div className="mb-4">
+                <div className="relative">
+                  <input
+                    type="text"
+                    className="block w-full pl-10 pr-3 py-2 border border-slate-300 rounded-md leading-5 bg-white placeholder-slate-500 focus:outline-none focus:ring-1 focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+                    placeholder="Search by title, author, or genre..."
+                    value={searchTerm.books}
+                    onChange={(e) => {
+                      setSearchTerm(prev => ({...prev, books: e.target.value}));
+                      fetchBooks(1, e.target.value);
+                    }}
+                  />
+                  <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                    <SearchIcon className="h-5 w-5 text-slate-400" />
                   </div>
                 </div>
+              </div>
 
-                {loading.users ? (
-                  <div className="flex justify-center items-center h-64">
-                    <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-indigo-600"></div>
-                  </div>
-                ) : users.length === 0 ? (
-                  <div className="bg-blue-50 border border-blue-200 text-blue-700 px-4 py-3 rounded relative" role="alert">
-                    No users found
-                  </div>
-                ) : (
-                  <div className="overflow-x-auto">
-                    <table className="min-w-full divide-y divide-gray-200">
-                      <thead className="bg-gray-50">
-                        <tr>
-                          <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Name</th>
-                          <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Email</th>
-                          <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Role</th>
-                          <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Joined</th>
-                          <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
-                        </tr>
-                      </thead>
-                      <tbody className="bg-white divide-y divide-gray-200">
-                        {users.map(user => (
-                          <tr key={user.id}>
-                            <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{user.name}</td>
-                            <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{user.email}</td>
-                            <td className="px-6 py-4 whitespace-nowrap">
-                              <span className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${
-                                user.role === 'admin' ? 'bg-red-100 text-red-800' : 'bg-blue-100 text-blue-800'
-                              }`}>
-                                {user.role}
-                              </span>
-                            </td>
-                            <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{formatDate(user.created_at)}</td>
-                            <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
+              {loading.books ? (
+                <div className="flex justify-center items-center h-64">
+                  <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-indigo-600"></div>
+                </div>
+              ) : books.length === 0 ? (
+                <div className="text-center py-12">
+                  <p className="text-slate-500">No books found in the collection</p>
+                </div>
+              ) : (
+                <div className="overflow-x-auto">
+                  <table className="min-w-full divide-y divide-slate-200">
+                    <thead className="bg-slate-50">
+                      <tr>
+                        <th className="px-6 py-3 text-left text-xs font-medium text-slate-500 uppercase tracking-wider">Title</th>
+                        <th className="px-6 py-3 text-left text-xs font-medium text-slate-500 uppercase tracking-wider">Author</th>
+                        <th className="px-6 py-3 text-left text-xs font-medium text-slate-500 uppercase tracking-wider">Available</th>
+                        <th className="px-6 py-3 text-left text-xs font-medium text-slate-500 uppercase tracking-wider">Actions</th>
+                      </tr>
+                    </thead>
+                    <tbody className="bg-white divide-y divide-slate-200">
+                      {books.map(book => (
+                        <tr key={book.id} className="hover:bg-slate-50">
+                          <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-slate-900">{book.title}</td>
+                          <td className="px-6 py-4 whitespace-nowrap text-sm text-slate-500">{book.author}</td>
+                          <td className="px-6 py-4 whitespace-nowrap text-sm text-slate-500">
+                            {book.available_copies} of {book.total_copies}
+                          </td>
+                          <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                            <div className="flex space-x-3">
                               <button
-                                className="text-red-600 hover:text-red-900"
-                                onClick={() => handleDeleteUser(user.id)}
-                                disabled={loading.action}
+                                onClick={() => {
+                                  setCurrentBook(book);
+                                  setShowEditBookModal(true);
+                                }}
+                                className="text-indigo-600 hover:text-indigo-900"
+                                title="Edit Book"
                               >
-                                <TrashIcon className="h-5 w-5" />
+                                <DocumentDuplicateIcon className="h-5 w-5" />
                               </button>
-                            </td>
-                          </tr>
-                        ))}
-                      </tbody>
-                    </table>
-                  </div>
-                )}
-
-                {users.length > 0 && (
-                  <div className="mt-4 flex justify-center">
-                    <nav className="relative z-0 inline-flex rounded-md shadow-sm -space-x-px" aria-label="Pagination">
-                      <button
-                        onClick={() => fetchUsers(pagination.users.current_page - 1, searchTerm.users)}
-                        disabled={pagination.users.current_page === 1}
-                        className={`relative inline-flex items-center px-2 py-2 rounded-l-md border border-gray-300 bg-white text-sm font-medium ${
-                          pagination.users.current_page === 1 ? 'text-gray-300 cursor-not-allowed' : 'text-gray-500 hover:bg-gray-50'
-                        }`}
-                      >
-                        Previous
-                      </button>
-                      {Array.from({length: pagination.users.last_page}, (_, i) => i + 1).map(page => (
-                        <button
-                          key={page}
-                          onClick={() => fetchUsers(page, searchTerm.users)}
-                          className={`relative inline-flex items-center px-4 py-2 border border-gray-300 bg-white text-sm font-medium ${
-                            pagination.users.current_page === page
-                              ? 'z-10 bg-indigo-50 border-indigo-500 text-indigo-600'
-                              : 'text-gray-500 hover:bg-gray-50'
-                          }`}
-                        >
-                          {page}
-                        </button>
+                              <button
+                                onClick={() => handleDeleteBook(book.id)}
+                                className="text-rose-600 hover:text-rose-900"
+                                title="Remove Book"
+                              >
+                                <ArchiveBoxIcon className="h-5 w-5" />
+                              </button>
+                            </div>
+                          </td>
+                        </tr>
                       ))}
+                    </tbody>
+                  </table>
+                </div>
+              )}
+
+              {books.length > 0 && (
+                <div className="mt-4 flex justify-center">
+                  <nav className="relative z-0 inline-flex rounded-md shadow-sm -space-x-px">
+                    <button
+                      onClick={() => fetchBooks(pagination.books.current_page - 1, searchTerm.books)}
+                      disabled={pagination.books.current_page === 1}
+                      className="relative inline-flex items-center px-2 py-2 rounded-l-md border border-slate-300 bg-white text-sm font-medium text-slate-500 hover:bg-slate-50 disabled:opacity-50 disabled:cursor-not-allowed"
+                    >
+                      Previous
+                    </button>
+                    {Array.from({length: pagination.books.last_page}, (_, i) => i + 1).map(page => (
                       <button
-                        onClick={() => fetchUsers(pagination.users.current_page + 1, searchTerm.users)}
-                        disabled={pagination.users.current_page === pagination.users.last_page}
-                        className={`relative inline-flex items-center px-2 py-2 rounded-r-md border border-gray-300 bg-white text-sm font-medium ${
-                          pagination.users.current_page === pagination.users.last_page ? 'text-gray-300 cursor-not-allowed' : 'text-gray-500 hover:bg-gray-50'
+                        key={page}
+                        onClick={() => fetchBooks(page, searchTerm.books)}
+                        className={`relative inline-flex items-center px-4 py-2 border border-slate-300 bg-white text-sm font-medium ${
+                          pagination.books.current_page === page
+                            ? 'z-10 bg-indigo-50 border-indigo-500 text-indigo-600'
+                            : 'text-slate-500 hover:bg-slate-50'
                         }`}
                       >
-                        Next
+                        {page}
                       </button>
-                    </nav>
-                  </div>
-                )}
-              </div>
+                    ))}
+                    <button
+                      onClick={() => fetchBooks(pagination.books.current_page + 1, searchTerm.books)}
+                      disabled={pagination.books.current_page === pagination.books.last_page}
+                      className="relative inline-flex items-center px-2 py-2 rounded-r-md border border-slate-300 bg-white text-sm font-medium text-slate-500 hover:bg-slate-50 disabled:opacity-50 disabled:cursor-not-allowed"
+                    >
+                      Next
+                    </button>
+                  </nav>
+                </div>
+              )}
             </div>
-          )}
+          </div>
+        )}
 
-          {/* Transactions Tab Content */}
-          {activeTab === "transactions" && (
-            <div className="bg-white shadow rounded-lg">
-              <div className="px-6 py-4 border-b border-gray-200">
-                <h3 className="text-lg font-medium text-gray-900">Transaction History</h3>
-              </div>
-              <div className="p-6">
-                <div className="mb-4">
-                  <div className="relative">
-                    <input
-                      type="text"
-                      className="block w-full pl-10 pr-3 py-2 border border-gray-300 rounded-md leading-5 bg-white placeholder-gray-500 focus:outline-none focus:ring-1 focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
-                      placeholder="Search transactions..."
-                      value={searchTerm.transactions}
-                      onChange={(e) => {
-                        setSearchTerm(prev => ({...prev, transactions: e.target.value}));
-                        fetchTransactions(1, e.target.value);
-                      }}
-                    />
-                    <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                      <MagnifyingGlassIcon className="h-5 w-5 text-gray-400" />
-                    </div>
+        {/* Users Tab Content */}
+        {activeTab === "users" && (
+          <div className="bg-white shadow rounded-lg">
+            <div className="px-4 py-5 sm:px-6 border-b border-slate-200">
+              <h3 className="text-lg font-medium text-slate-900">Member Directory</h3>
+            </div>
+            <div className="px-4 py-5 sm:p-6">
+              <div className="mb-4">
+                <div className="relative">
+                  <input
+                    type="text"
+                    className="block w-full pl-10 pr-3 py-2 border border-slate-300 rounded-md leading-5 bg-white placeholder-slate-500 focus:outline-none focus:ring-1 focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+                    placeholder="Search by name or email..."
+                    value={searchTerm.users}
+                    onChange={(e) => {
+                      setSearchTerm(prev => ({...prev, users: e.target.value}));
+                      fetchUsers(1, e.target.value);
+                    }}
+                  />
+                  <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                    <SearchIcon className="h-5 w-5 text-slate-400" />
                   </div>
                 </div>
-
-                {loading.transactions ? (
-                  <div className="flex justify-center items-center h-64">
-                    <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-indigo-600"></div>
-                  </div>
-                ) : transactions.length === 0 ? (
-                  <div className="bg-blue-50 border border-blue-200 text-blue-700 px-4 py-3 rounded relative" role="alert">
-                    No transactions found
-                  </div>
-                ) : (
-                  <div className="overflow-x-auto">
-                    <table className="min-w-full divide-y divide-gray-200">
-                      <thead className="bg-gray-50">
-                        <tr>
-                          <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">User</th>
-                          <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Book</th>
-                          <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Borrowed Date</th>
-                          <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Due Date</th>
-                          <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
-                        </tr>
-                      </thead>
-                      <tbody className="bg-white divide-y divide-gray-200">
-                        {transactions.map(tx => (
-                          <tr key={tx.id} className="hover:bg-gray-50">
-                            <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{tx.user.name}</td>
-                            <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                              {tx.book.title} by {tx.book.author}
-                            </td>
-                            <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                              <div>{formatDate(tx.borrowed_date)}</div>
-                              <div className="text-xs text-gray-400">{formatTime(tx.borrowed_date)}</div>
-                            </td>
-                            <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                              <div>{formatDate(tx.due_date)}</div>
-                              <div className="text-xs text-gray-400">{formatTime(tx.due_date)}</div>
-                            </td>
-                            <td className="px-6 py-4 whitespace-nowrap">
-                              <span className={`px-2.5 py-1 inline-flex text-xs leading-5 font-semibold rounded-full ${
-                                tx.status === 'returned' 
-                                  ? 'bg-green-100 text-green-800' 
-                                  : 'bg-blue-100 text-blue-800'
-                              }`}>
-                                {tx.status === 'returned' ? 'Returned' : 'Borrowed'}
-                              </span>
-                            </td>
-                          </tr>
-                        ))}
-                      </tbody>
-                    </table>
-                  </div>
-                )}
-
-                {transactions.length > 0 && (
-                  <div className="mt-4 flex justify-center">
-                    <nav className="relative z-0 inline-flex rounded-md shadow-sm -space-x-px" aria-label="Pagination">
-                      <button
-                        onClick={() => fetchTransactions(pagination.transactions.current_page - 1, searchTerm.transactions)}
-                        disabled={pagination.transactions.current_page === 1}
-                        className={`relative inline-flex items-center px-2 py-2 rounded-l-md border border-gray-300 bg-white text-sm font-medium ${
-                          pagination.transactions.current_page === 1 ? 'text-gray-300 cursor-not-allowed' : 'text-gray-500 hover:bg-gray-50'
-                        }`}
-                      >
-                        Previous
-                      </button>
-                      {Array.from({length: pagination.transactions.last_page}, (_, i) => i + 1).map(page => (
-                        <button
-                          key={page}
-                          onClick={() => fetchTransactions(page, searchTerm.transactions)}
-                          className={`relative inline-flex items-center px-4 py-2 border border-gray-300 bg-white text-sm font-medium ${
-                            pagination.transactions.current_page === page
-                              ? 'z-10 bg-indigo-50 border-indigo-500 text-indigo-600'
-                              : 'text-gray-500 hover:bg-gray-50'
-                          }`}
-                        >
-                          {page}
-                        </button>
-                      ))}
-                      <button
-                        onClick={() => fetchTransactions(pagination.transactions.current_page + 1, searchTerm.transactions)}
-                        disabled={pagination.transactions.current_page === pagination.transactions.last_page}
-                        className={`relative inline-flex items-center px-2 py-2 rounded-r-md border border-gray-300 bg-white text-sm font-medium ${
-                          pagination.transactions.current_page === pagination.transactions.last_page ? 'text-gray-300 cursor-not-allowed' : 'text-gray-500 hover:bg-gray-50'
-                        }`}
-                      >
-                        Next
-                      </button>
-                    </nav>
-                  </div>
-                )}
               </div>
+
+              {loading.users ? (
+                <div className="flex justify-center items-center h-64">
+                  <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-indigo-600"></div>
+                </div>
+              ) : users.length === 0 ? (
+                <div className="text-center py-12">
+                  <p className="text-slate-500">No members found</p>
+                </div>
+              ) : (
+                <div className="overflow-x-auto">
+                  <table className="min-w-full divide-y divide-slate-200">
+                    <thead className="bg-slate-50">
+                      <tr>
+                        <th className="px-6 py-3 text-left text-xs font-medium text-slate-500 uppercase tracking-wider">Name</th>
+                        <th className="px-6 py-3 text-left text-xs font-medium text-slate-500 uppercase tracking-wider">Email</th>
+                        <th className="px-6 py-3 text-left text-xs font-medium text-slate-500 uppercase tracking-wider">Role</th>
+                        <th className="px-6 py-3 text-left text-xs font-medium text-slate-500 uppercase tracking-wider">Actions</th>
+                      </tr>
+                    </thead>
+                    <tbody className="bg-white divide-y divide-slate-200">
+                      {users.map(user => (
+                        <tr key={user.id} className="hover:bg-slate-50">
+                          <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-slate-900">{user.name}</td>
+                          <td className="px-6 py-4 whitespace-nowrap text-sm text-slate-500">{user.email}</td>
+                          <td className="px-6 py-4 whitespace-nowrap">
+                            <span className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${
+                              user.role === 'admin' ? 'bg-purple-100 text-purple-800' : 'bg-emerald-100 text-emerald-800'
+                            }`}>
+                              {user.role === 'admin' ? 'Administrator' : 'Member'}
+                            </span>
+                          </td>
+                          <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                            <button
+                              onClick={() => handleDeleteUser(user.id)}
+                              className="text-rose-600 hover:text-rose-900"
+                              title="Remove Member"
+                            >
+                              <ArchiveBoxIcon className="h-5 w-5" />
+                            </button>
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              )}
+
+              {users.length > 0 && (
+                <div className="mt-4 flex justify-center">
+                  <nav className="relative z-0 inline-flex rounded-md shadow-sm -space-x-px">
+                    <button
+                      onClick={() => fetchUsers(pagination.users.current_page - 1, searchTerm.users)}
+                      disabled={pagination.users.current_page === 1}
+                      className="relative inline-flex items-center px-2 py-2 rounded-l-md border border-slate-300 bg-white text-sm font-medium text-slate-500 hover:bg-slate-50 disabled:opacity-50 disabled:cursor-not-allowed"
+                    >
+                      Previous
+                    </button>
+                    {Array.from({length: pagination.users.last_page}, (_, i) => i + 1).map(page => (
+                      <button
+                        key={page}
+                        onClick={() => fetchUsers(page, searchTerm.users)}
+                        className={`relative inline-flex items-center px-4 py-2 border border-slate-300 bg-white text-sm font-medium ${
+                          pagination.users.current_page === page
+                            ? 'z-10 bg-indigo-50 border-indigo-500 text-indigo-600'
+                            : 'text-slate-500 hover:bg-slate-50'
+                        }`}
+                      >
+                        {page}
+                      </button>
+                    ))}
+                    <button
+                      onClick={() => fetchUsers(pagination.users.current_page + 1, searchTerm.users)}
+                      disabled={pagination.users.current_page === pagination.users.last_page}
+                      className="relative inline-flex items-center px-2 py-2 rounded-r-md border border-slate-300 bg-white text-sm font-medium text-slate-500 hover:bg-slate-50 disabled:opacity-50 disabled:cursor-not-allowed"
+                    >
+                      Next
+                    </button>
+                  </nav>
+                </div>
+              )}
             </div>
-          )}
-        </div>
+          </div>
+        )}
+
+        {/* Transactions Tab Content */}
+        {activeTab === "transactions" && (
+          <div className="bg-white shadow rounded-lg">
+            <div className="px-4 py-5 sm:px-6 border-b border-slate-200">
+              <h3 className="text-lg font-medium text-slate-900">Borrowing History</h3>
+            </div>
+            <div className="px-4 py-5 sm:p-6">
+              <div className="mb-4">
+                <div className="relative">
+                  <input
+                    type="text"
+                    className="block w-full pl-10 pr-3 py-2 border border-slate-300 rounded-md leading-5 bg-white placeholder-slate-500 focus:outline-none focus:ring-1 focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+                    placeholder="Search by member or book..."
+                    value={searchTerm.transactions}
+                    onChange={(e) => {
+                      setSearchTerm(prev => ({...prev, transactions: e.target.value}));
+                      fetchTransactions(1, e.target.value);
+                    }}
+                  />
+                  <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                    <SearchIcon className="h-5 w-5 text-slate-400" />
+                  </div>
+                </div>
+              </div>
+
+              {loading.transactions ? (
+                <div className="flex justify-center items-center h-64">
+                  <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-indigo-600"></div>
+                </div>
+              ) : transactions.length === 0 ? (
+                <div className="text-center py-12">
+                  <p className="text-slate-500">No borrowing records found</p>
+                </div>
+              ) : (
+                <div className="overflow-x-auto">
+                  <table className="min-w-full divide-y divide-slate-200">
+                    <thead className="bg-slate-50">
+                      <tr>
+                        <th className="px-6 py-3 text-left text-xs font-medium text-slate-500 uppercase tracking-wider">Member</th>
+                        <th className="px-6 py-3 text-left text-xs font-medium text-slate-500 uppercase tracking-wider">Book</th>
+                        <th className="px-6 py-3 text-left text-xs font-medium text-slate-500 uppercase tracking-wider">Status</th>
+                        <th className="px-6 py-3 text-left text-xs font-medium text-slate-500 uppercase tracking-wider">Due Date</th>
+                      </tr>
+                    </thead>
+                    <tbody className="bg-white divide-y divide-slate-200">
+                      {transactions.map(tx => (
+                        <tr key={tx.id} className="hover:bg-slate-50">
+                          <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-slate-900">{tx.user.name}</td>
+                          <td className="px-6 py-4 whitespace-nowrap text-sm text-slate-500">{tx.book.title}</td>
+                          <td className="px-6 py-4 whitespace-nowrap">
+                            <span className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${
+                              tx.status === 'returned' ? 'bg-emerald-100 text-emerald-800' : 'bg-amber-100 text-amber-800'
+                            }`}>
+                              {tx.status === 'returned' ? 'Returned' : 'On Loan'}
+                            </span>
+                          </td>
+                          <td className="px-6 py-4 whitespace-nowrap text-sm text-slate-500">{formatDate(tx.due_date)}</td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              )}
+
+              {transactions.length > 0 && (
+                <div className="mt-4 flex justify-center">
+                  <nav className="relative z-0 inline-flex rounded-md shadow-sm -space-x-px">
+                    <button
+                      onClick={() => fetchTransactions(pagination.transactions.current_page - 1, searchTerm.transactions)}
+                      disabled={pagination.transactions.current_page === 1}
+                      className="relative inline-flex items-center px-2 py-2 rounded-l-md border border-slate-300 bg-white text-sm font-medium text-slate-500 hover:bg-slate-50 disabled:opacity-50 disabled:cursor-not-allowed"
+                    >
+                      Previous
+                    </button>
+                    {Array.from({length: pagination.transactions.last_page}, (_, i) => i + 1).map(page => (
+                      <button
+                        key={page}
+                        onClick={() => fetchTransactions(page, searchTerm.transactions)}
+                        className={`relative inline-flex items-center px-4 py-2 border border-slate-300 bg-white text-sm font-medium ${
+                          pagination.transactions.current_page === page
+                            ? 'z-10 bg-indigo-50 border-indigo-500 text-indigo-600'
+                            : 'text-slate-500 hover:bg-slate-50'
+                        }`}
+                      >
+                        {page}
+                      </button>
+                    ))}
+                    <button
+                      onClick={() => fetchTransactions(pagination.transactions.current_page + 1, searchTerm.transactions)}
+                      disabled={pagination.transactions.current_page === pagination.transactions.last_page}
+                      className="relative inline-flex items-center px-2 py-2 rounded-r-md border border-slate-300 bg-white text-sm font-medium text-slate-500 hover:bg-slate-50 disabled:opacity-50 disabled:cursor-not-allowed"
+                    >
+                      Next
+                    </button>
+                  </nav>
+                </div>
+              )}
+            </div>
+          </div>
+        )}
       </div>
 
       {/* Add Book Modal */}
       {showAddBookModal && (
-        <div className="fixed inset-0 bg-gray-500 bg-opacity-75 flex items-center justify-center p-4 z-50">
+        <div className="fixed inset-0 bg-slate-500 bg-opacity-75 flex items-center justify-center p-4 z-50">
           <div className="bg-white rounded-lg max-w-md w-full p-6">
             <div className="flex justify-between items-center mb-4">
-              <h3 className="text-lg font-medium text-gray-900">Add New Book</h3>
+              <h3 className="text-lg font-medium text-slate-900">Add New Book</h3>
               <button
                 onClick={() => setShowAddBookModal(false)}
-                className="text-gray-400 hover:text-gray-500"
+                className="text-slate-400 hover:text-slate-500"
               >
-                <span className="sr-only">Close</span>
-                <svg className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12" />
-                </svg>
+                <XMarkOutlineIcon className="h-6 w-6" />
               </button>
             </div>
             <form onSubmit={handleAddBook}>
               <div className="space-y-4">
                 <div>
-                  <label htmlFor="title" className="block text-sm font-medium text-gray-700">Title</label>
+                  <label htmlFor="title" className="block text-sm font-medium text-slate-700">Book Title</label>
                   <input
                     type="text"
                     id="title"
                     name="title"
                     required
-                    className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
+                    className="mt-1 block w-full rounded-md border-slate-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
                     value={newBook.title}
                     onChange={(e) => setNewBook(prev => ({...prev, title: e.target.value}))}
                   />
                 </div>
                 <div>
-                  <label htmlFor="author" className="block text-sm font-medium text-gray-700">Author</label>
+                  <label htmlFor="author" className="block text-sm font-medium text-slate-700">Author Name</label>
                   <input
                     type="text"
                     id="author"
                     name="author"
                     required
-                    className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
+                    className="mt-1 block w-full rounded-md border-slate-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
                     value={newBook.author}
                     onChange={(e) => setNewBook(prev => ({...prev, author: e.target.value}))}
                   />
                 </div>
                 <div>
-                  <label htmlFor="genre" className="block text-sm font-medium text-gray-700">Genre</label>
+                  <label htmlFor="genre" className="block text-sm font-medium text-slate-700">Genre</label>
                   <input
                     type="text"
                     id="genre"
                     name="genre"
                     required
-                    className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
+                    className="mt-1 block w-full rounded-md border-slate-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
                     value={newBook.genre}
                     onChange={(e) => setNewBook(prev => ({...prev, genre: e.target.value}))}
                   />
                 </div>
                 <div>
-                  <label htmlFor="description" className="block text-sm font-medium text-gray-700">Description</label>
-                  <textarea
-                    id="description"
-                    name="description"
-                    rows={3}
-                    required
-                    className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
-                    value={newBook.description}
-                    onChange={(e) => setNewBook(prev => ({...prev, description: e.target.value}))}
-                  />
-                </div>
-                <div>
-                  <label htmlFor="total_copies" className="block text-sm font-medium text-gray-700">Total Copies</label>
+                  <label htmlFor="total_copies" className="block text-sm font-medium text-slate-700">Number of Copies</label>
                   <input
                     type="number"
                     id="total_copies"
                     name="total_copies"
                     min="1"
                     required
-                    className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
+                    className="mt-1 block w-full rounded-md border-slate-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
                     value={newBook.total_copies}
                     onChange={(e) => setNewBook(prev => ({...prev, total_copies: parseInt(e.target.value)}))}
                   />
@@ -1235,7 +1098,7 @@ const AdminDashboard = () => {
                 <button
                   type="button"
                   onClick={() => setShowAddBookModal(false)}
-                  className="px-4 py-2 border border-gray-300 rounded-md text-sm font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+                  className="px-4 py-2 border border-slate-300 rounded-md text-sm font-medium text-slate-700 hover:bg-slate-50"
                 >
                   Cancel
                 </button>
@@ -1246,7 +1109,7 @@ const AdminDashboard = () => {
                 >
                   {loading.action ? (
                     <div className="flex items-center">
-                      <ArrowPathIcon className="animate-spin -ml-1 mr-2 h-4 w-4" />
+                      <ArrowPathOutlineIcon className="animate-spin -ml-1 mr-2 h-4 w-4" />
                       Adding...
                     </div>
                   ) : (
@@ -1261,21 +1124,18 @@ const AdminDashboard = () => {
 
       {/* Edit Book Modal */}
       {showEditBookModal && currentBook && (
-        <div className="fixed inset-0 bg-gray-500 bg-opacity-75 flex items-center justify-center p-4 z-50">
+        <div className="fixed inset-0 bg-slate-500 bg-opacity-75 flex items-center justify-center p-4 z-50">
           <div className="bg-white rounded-lg max-w-md w-full p-6">
             <div className="flex justify-between items-center mb-4">
-              <h3 className="text-lg font-medium text-gray-900">Edit Book</h3>
+              <h3 className="text-lg font-medium text-slate-900">Update Book Details</h3>
               <button
                 onClick={() => {
                   setShowEditBookModal(false);
                   setCurrentBook(null);
                 }}
-                className="text-gray-400 hover:text-gray-500"
+                className="text-slate-400 hover:text-slate-500"
               >
-                <span className="sr-only">Close</span>
-                <svg className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12" />
-                </svg>
+                <XMarkOutlineIcon className="h-6 w-6" />
               </button>
             </div>
             <form onSubmit={(e) => {
@@ -1291,62 +1151,50 @@ const AdminDashboard = () => {
             }}>
               <div className="space-y-4">
                 <div>
-                  <label htmlFor="edit-title" className="block text-sm font-medium text-gray-700">Title</label>
+                  <label htmlFor="edit-title" className="block text-sm font-medium text-slate-700">Book Title</label>
                   <input
                     type="text"
                     id="edit-title"
                     name="title"
                     required
-                    className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
+                    className="mt-1 block w-full rounded-md border-slate-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
                     value={currentBook.title}
                     onChange={(e) => setCurrentBook(prev => prev ? {...prev, title: e.target.value} : null)}
                   />
                 </div>
                 <div>
-                  <label htmlFor="edit-author" className="block text-sm font-medium text-gray-700">Author</label>
+                  <label htmlFor="edit-author" className="block text-sm font-medium text-slate-700">Author Name</label>
                   <input
                     type="text"
                     id="edit-author"
                     name="author"
                     required
-                    className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
+                    className="mt-1 block w-full rounded-md border-slate-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
                     value={currentBook.author}
                     onChange={(e) => setCurrentBook(prev => prev ? {...prev, author: e.target.value} : null)}
                   />
                 </div>
                 <div>
-                  <label htmlFor="edit-genre" className="block text-sm font-medium text-gray-700">Genre</label>
+                  <label htmlFor="edit-genre" className="block text-sm font-medium text-slate-700">Genre</label>
                   <input
                     type="text"
                     id="edit-genre"
                     name="genre"
                     required
-                    className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
+                    className="mt-1 block w-full rounded-md border-slate-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
                     value={currentBook.genre}
                     onChange={(e) => setCurrentBook(prev => prev ? {...prev, genre: e.target.value} : null)}
                   />
                 </div>
                 <div>
-                  <label htmlFor="edit-description" className="block text-sm font-medium text-gray-700">Description</label>
-                  <textarea
-                    id="edit-description"
-                    name="description"
-                    rows={3}
-                    required
-                    className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
-                    value={currentBook.description}
-                    onChange={(e) => setCurrentBook(prev => prev ? {...prev, description: e.target.value} : null)}
-                  />
-                </div>
-                <div>
-                  <label htmlFor="edit-total-copies" className="block text-sm font-medium text-gray-700">Total Copies</label>
+                  <label htmlFor="edit-total-copies" className="block text-sm font-medium text-slate-700">Number of Copies</label>
                   <input
                     type="number"
                     id="edit-total-copies"
                     name="total_copies"
                     min="1"
                     required
-                    className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
+                    className="mt-1 block w-full rounded-md border-slate-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
                     value={currentBook.total_copies}
                     onChange={(e) => setCurrentBook(prev => prev ? {...prev, total_copies: parseInt(e.target.value)} : null)}
                   />
@@ -1359,7 +1207,7 @@ const AdminDashboard = () => {
                     setShowEditBookModal(false);
                     setCurrentBook(null);
                   }}
-                  className="px-4 py-2 border border-gray-300 rounded-md text-sm font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+                  className="px-4 py-2 border border-slate-300 rounded-md text-sm font-medium text-slate-700 hover:bg-slate-50"
                 >
                   Cancel
                 </button>
@@ -1370,7 +1218,7 @@ const AdminDashboard = () => {
                 >
                   {loading.action ? (
                     <div className="flex items-center">
-                      <ArrowPathIcon className="animate-spin -ml-1 mr-2 h-4 w-4" />
+                      <ArrowPathOutlineIcon className="animate-spin -ml-1 mr-2 h-4 w-4" />
                       Updating...
                     </div>
                   ) : (

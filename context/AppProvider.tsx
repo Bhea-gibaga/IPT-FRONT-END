@@ -118,9 +118,9 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
         
         // Redirect based on role
         if (userData.role === 'admin') {
-          router.push('/admin/dashboard');
-        } else {
           router.push('/dashboard');
+        } else {
+          router.push('/user');
         }
       } else {
         throw new Error('Invalid response format');
@@ -192,9 +192,16 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
       setAuthToken(null);
       setUser(null);
       
-      toast.success('Logged out successfully');
+      // Ensure we're not loading before redirecting
       setIsLoading(false);
-      router.push('/auth');
+      
+      // Show success message
+      toast.success('Logged out successfully');
+      
+      // Use setTimeout to ensure state updates are complete before redirect
+      setTimeout(() => {
+        router.push('/auth');
+      }, 100);
     } catch (error) {
       console.error('Logout error:', error);
       // Even if there's an error, ensure we clear local state
@@ -202,9 +209,11 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
       localStorage.removeItem('user');
       setAuthToken(null);
       setUser(null);
-      toast.success('Logged out successfully');
       setIsLoading(false);
-      router.push('/auth');
+      toast.success('Logged out successfully');
+      setTimeout(() => {
+        router.push('/auth');
+      }, 100);
     }
   };
 
