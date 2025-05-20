@@ -17,7 +17,7 @@ interface ApiErrorResponse {
   message: string;
   errors?: Record<string, string[]>;
 }
-
+//
 interface AppContextType {
   authToken: string | null;
   user: User | null;
