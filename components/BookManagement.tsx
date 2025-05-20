@@ -18,7 +18,7 @@ interface BookManagementProps {
   books: Book[];
   onRefresh: () => void;
 }
-
+//
 const BookManagement = ({ books, onRefresh }: BookManagementProps) => {
   const { authToken } = useAppContext();
   const [isEditing, setIsEditing] = useState<Book | null>(null);
