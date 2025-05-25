@@ -22,23 +22,21 @@ const AuthPage = () => {
     password_confirmation: ""
   });
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [hasRedirected, setHasRedirected] = useState(false); // Prevent double redirect
+  const [hasRedirected, setHasRedirected] = useState(false);
   const router = useRouter();
   const { login, register, authToken, isLoading, user } = useAppContext();
 
-  // Redirect if already authenticated
   useEffect(() => {
     if (!hasRedirected && authToken && !isLoading && user?.role) {
       if (user.role === 'admin') {
-        router.push('/dashboard'); // Admin
+        router.push('/dashboard');
       } else {
-        router.push('/user'); // Regular user
+        router.push('/user');
       }
       setHasRedirected(true);
     }
   }, [authToken, isLoading, user?.role, hasRedirected, router]);
 
-  // Handle input change
   const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setFormData({
       ...formData,
@@ -46,7 +44,6 @@ const AuthPage = () => {
     });
   };
 
-  // Submit login or register
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     setIsSubmitting(true);
@@ -68,10 +65,9 @@ const AuthPage = () => {
           formData.password_confirmation!
         );
         toast.success("Registered successfully! Please login.");
-        setIsLogin(true); // Switch to login form
+        setIsLogin(true);
       }
     } catch (error: any) {
-      console.error("Authentication error:", error);
       toast.error(error?.response?.data?.message || "Authentication failed");
     } finally {
       setIsSubmitting(false);
@@ -80,114 +76,120 @@ const AuthPage = () => {
 
   if (isLoading || authToken) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-gray-50">
-        <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-blue-500"></div>
+      <div className="min-h-screen flex items-center justify-center">
+        <div className="animate-spin rounded-full h-8 w-8 border-t-2 border-b-2 border-primary-600"></div>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-purple-900 to-purple-800 py-12 px-4 sm:px-6 lg:px-8">
-      <div className="max-w-md w-full space-y-8 bg-white/10 backdrop-blur-sm p-8 rounded-xl shadow-2xl border border-purple-500/20">
-        <div>
-          <div className="flex justify-center">
-            <BookOpenIcon className="h-12 w-12 text-white" />
+    <div className="min-h-screen flex items-center justify-center bg-gray-50 p-4">
+      <div className="w-full max-w-md bg-white rounded-lg shadow-sm p-6">
+        <div className="text-center mb-6">
+          <div className="flex justify-center mb-4">
+            <BookOpenIcon className="h-10 w-10 text-primary-600" />
           </div>
-          <h2 className="mt-6 text-center text-3xl font-extrabold text-white">
-            {isLogin ? "Welcome Back" : "Join Our Library"}
+          <h2 className="text-2xl font-semibold text-gray-900">
+            {isLogin ? "Welcome Back" : "Create Account"}
           </h2>
-          <p className="mt-2 text-center text-sm text-purple-200">
-            {isLogin ? "Sign in to access your account" : "Create your account to start borrowing"}
+          <p className="mt-1 text-sm text-gray-600">
+            {isLogin ? "Sign in to your account" : "Sign up to get started"}
           </p>
         </div>
         
-        <form className="mt-8 space-y-6" onSubmit={handleSubmit}>
-          <div className="rounded-md shadow-sm space-y-4">
-            {!isLogin && (
-              <div>
-                <label htmlFor="name" className="block text-sm font-medium text-purple-200 mb-1">Name</label>
-                <input
-                  id="name"
-                  name="name"
-                  type="text"
-                  required
-                  className="appearance-none rounded-lg relative block w-full px-3 py-2 border border-purple-500/30 bg-purple-900/50 placeholder-purple-300 text-white focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-purple-500 focus:z-10 sm:text-sm"
-                  placeholder="Enter your name"
-                  value={formData.name}
-                  onChange={handleInputChange}
-                />
-              </div>
-            )}
-
+        <form onSubmit={handleSubmit} className="space-y-4">
+          {!isLogin && (
             <div>
-              <label htmlFor="email" className="block text-sm font-medium text-purple-200 mb-1">Email address</label>
+              <label htmlFor="name" className="block text-sm font-medium text-gray-700 mb-1">
+                Name
+              </label>
               <input
-                id="email"
-                name="email"
-                type="email"
+                id="name"
+                name="name"
+                type="text"
                 required
-                className="appearance-none rounded-lg relative block w-full px-3 py-2 border border-purple-500/30 bg-purple-900/50 placeholder-purple-300 text-white focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-purple-500 focus:z-10 sm:text-sm"
-                placeholder="Enter your email"
-                value={formData.email}
+                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-primary-600 focus:border-primary-600"
+                placeholder="Enter your name"
+                value={formData.name}
                 onChange={handleInputChange}
               />
             </div>
+          )}
 
-            <div>
-              <label htmlFor="password" className="block text-sm font-medium text-purple-200 mb-1">Password</label>
-              <input
-                id="password"
-                name="password"
-                type="password"
-                required
-                minLength={8}
-                className="appearance-none rounded-lg relative block w-full px-3 py-2 border border-purple-500/30 bg-purple-900/50 placeholder-purple-300 text-white focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-purple-500 focus:z-10 sm:text-sm"
-                placeholder="Enter your password"
-                value={formData.password}
-                onChange={handleInputChange}
-              />
-            </div>
-
-            {!isLogin && (
-              <div>
-                <label htmlFor="password_confirmation" className="block text-sm font-medium text-purple-200 mb-1">Confirm Password</label>
-                <input
-                  id="password_confirmation"
-                  name="password_confirmation"
-                  type="password"
-                  required
-                  minLength={8}
-                  className="appearance-none rounded-lg relative block w-full px-3 py-2 border border-purple-500/30 bg-purple-900/50 placeholder-purple-300 text-white focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-purple-500 focus:z-10 sm:text-sm"
-                  placeholder="Confirm your password"
-                  value={formData.password_confirmation}
-                  onChange={handleInputChange}
-                />
-              </div>
-            )}
+          <div>
+            <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-1">
+              Email
+            </label>
+            <input
+              id="email"
+              name="email"
+              type="email"
+              required
+              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-primary-600 focus:border-primary-600"
+              placeholder="Enter your email"
+              value={formData.email}
+              onChange={handleInputChange}
+            />
           </div>
 
           <div>
-            <button
-              type="submit"
-              disabled={isSubmitting}
-              className="group relative w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-lg text-white bg-gradient-to-r from-purple-600 to-purple-700 hover:from-purple-700 hover:to-purple-800 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-purple-500 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200 shadow-lg hover:shadow-purple-500/20"
-            >
-              {isSubmitting ? (
-                <div className="w-5 h-5 border-t-2 border-b-2 border-white rounded-full animate-spin"></div>
-              ) : (
-                isLogin ? "Sign in" : "Create Account"
-              )}
-            </button>
+            <label htmlFor="password" className="block text-sm font-medium text-gray-700 mb-1">
+              Password
+            </label>
+            <input
+              id="password"
+              name="password"
+              type="password"
+              required
+              minLength={8}
+              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-primary-600 focus:border-primary-600"
+              placeholder="Enter your password"
+              value={formData.password}
+              onChange={handleInputChange}
+            />
           </div>
+
+          {!isLogin && (
+            <div>
+              <label htmlFor="password_confirmation" className="block text-sm font-medium text-gray-700 mb-1">
+                Confirm Password
+              </label>
+              <input
+                id="password_confirmation"
+                name="password_confirmation"
+                type="password"
+                required
+                minLength={8}
+                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-primary-600 focus:border-primary-600"
+                placeholder="Confirm your password"
+                value={formData.password_confirmation}
+                onChange={handleInputChange}
+              />
+            </div>
+          )}
+
+          <button
+            type="submit"
+            disabled={isSubmitting}
+            className="w-full bg-primary-600 text-white py-2 px-4 rounded-md hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed"
+          >
+            {isSubmitting ? (
+              <div className="flex justify-center">
+                <div className="w-5 h-5 border-t-2 border-b-2 border-white rounded-full animate-spin"></div>
+              </div>
+            ) : (
+              isLogin ? "Sign In" : "Create Account"
+            )}
+          </button>
         </form>
 
-        <div className="text-center">
-          <p className="text-sm text-purple-200">
+        <div className="mt-4 text-center">
+          <p className="text-sm text-gray-600">
             {isLogin ? "Don't have an account?" : "Already have an account?"}
             <button
               onClick={() => setIsLogin(!isLogin)}
               disabled={isSubmitting}
-              className="ml-1 font-medium text-purple-300 hover:text-white focus:outline-none focus:underline transition-colors duration-200"
+              className="ml-1 text-primary-600 hover:text-primary-700 font-medium"
             >
               {isLogin ? "Sign up" : "Sign in"}
             </button>
