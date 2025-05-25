@@ -5,6 +5,7 @@ import { useAppContext } from '@/context/AppProvider';
 import { useRouter } from 'next/navigation';
 import toast from 'react-hot-toast';
 import { BookOpenIcon } from '@heroicons/react/24/outline';
+import Loader from '@/components/loader';
 
 interface FormData {
   name?: string;
@@ -12,6 +13,8 @@ interface FormData {
   password: string;
   password_confirmation?: string;
 }
+
+
 
 const AuthPage = () => {
   const [isLogin, setIsLogin] = useState<boolean>(true);
@@ -75,11 +78,7 @@ const AuthPage = () => {
   };
 
   if (isLoading || authToken) {
-    return (
-      <div className="min-h-screen flex items-center justify-center">
-        <div className="animate-spin rounded-full h-8 w-8 border-t-2 border-b-2 border-primary-600"></div>
-      </div>
-    );
+    return <Loader fullScreen text="Loading..." />;
   }
 
   return (
