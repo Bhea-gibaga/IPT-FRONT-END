@@ -47,6 +47,7 @@ import {
   ArchiveBoxIcon
 } from '@heroicons/react/24/outline';
 import ProfileModal from "@/components/ProfileModal";
+import Loader from '@/components/loader';
 
 interface Book {
   id: number;
@@ -507,14 +508,7 @@ const AdminDashboard = () => {
   };
 
   if (isLoading) {
-    return (
-      <div className="min-h-screen flex items-center justify-center bg-violet-50">
-        <div className="flex flex-col items-center space-y-4">
-          <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-violet-600"></div>
-          <p className="text-violet-600 font-medium">Loading dashboard...</p>
-        </div>
-      </div>
-    );
+    return <Loader fullScreen text="Loading dashboard..." />;
   }
 
   if (!authToken) {
@@ -728,7 +722,7 @@ const AdminDashboard = () => {
 
               {loading.books ? (
                 <div className="flex justify-center items-center h-64">
-                  <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-indigo-600"></div>
+                  <Loader text="Loading books..." />
                 </div>
               ) : books.length === 0 ? (
                 <div className="text-center py-12">
@@ -845,7 +839,7 @@ const AdminDashboard = () => {
 
               {loading.users ? (
                 <div className="flex justify-center items-center h-64">
-                  <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-indigo-600"></div>
+                  <Loader text="Loading users..." />
                 </div>
               ) : users.length === 0 ? (
                 <div className="text-center py-12">
@@ -954,7 +948,7 @@ const AdminDashboard = () => {
 
               {loading.transactions ? (
                 <div className="flex justify-center items-center h-64">
-                  <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-indigo-600"></div>
+                  <Loader text="Loading transactions..." />
                 </div>
               ) : transactions.length === 0 ? (
                 <div className="text-center py-12">
