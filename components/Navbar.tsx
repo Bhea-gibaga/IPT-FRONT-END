@@ -1,4 +1,5 @@
 "use client";
+
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useAppContext } from "@/context/AppProvider";
@@ -42,14 +43,14 @@ const Navbar = () => {
 
   if (isLoading) {
     return (
-      <nav className="bg-purple-600 text-white shadow-lg">
-        <div className="container mx-auto px-4">
-          <div className="flex items-center justify-between h-16">
+      <nav className="bg-white border-b">
+        <div className="max-w-7xl mx-auto px-4">
+          <div className="flex items-center justify-between h-14">
             <div className="flex items-center">
-              <BookOpenIcon className="h-8 w-8" />
-              <span className="ml-2 text-lg font-semibold">Digital Library</span>
+              <BookOpenIcon className="h-6 w-6 text-primary-600" />
+              <span className="ml-2 text-base font-medium">Digital Library</span>
             </div>
-            <div className="animate-pulse h-4 w-24 bg-purple-500 rounded"></div>
+            <div className="h-4 w-24 bg-gray-200 rounded animate-pulse"></div>
           </div>
         </div>
       </nav>
@@ -57,81 +58,64 @@ const Navbar = () => {
   }
 
   return (
-    <nav className="bg-purple-600 text-white shadow-lg">
-      <div className="container mx-auto px-4">
-        <div className="flex items-center justify-between h-16">
+    <nav className="bg-white border-b">
+      <div className="max-w-7xl mx-auto px-4">
+        <div className="flex items-center justify-between h-14">
           <div className="flex items-center">
             <Link 
               href="/" 
-              className="flex items-center hover:text-purple-200 transition-colors"
-              aria-label="Home"
+              className="flex items-center text-gray-900 hover:text-primary-600"
             >
-              <BookOpenIcon className="h-8 w-8" />
-              <span className="ml-2 text-lg font-semibold">Digital Library</span>
+              <BookOpenIcon className="h-6 w-6" />
+              <span className="ml-2 text-base font-medium">Digital Library</span>
             </Link>
           </div>
           
           {/* Desktop Menu */}
-          <div className="hidden md:flex items-center space-x-4">
+          <div className="hidden md:flex items-center space-x-2">
             {authToken ? (
               <>
                 <Link 
                   href="/" 
-                  className="flex items-center px-3 py-2 text-sm font-medium hover:bg-purple-700 rounded-md transition-colors"
-                  aria-label="Home"
+                  className="px-3 py-2 text-sm text-gray-700 hover:text-primary-600 hover:bg-gray-50 rounded-md"
                 >
-                  <HomeIcon className="h-5 w-5 mr-1" />
-                  Home
+                  <HomeIcon className="h-5 w-5" />
                 </Link>
                 {user?.role === 'admin' && (
                   <Link 
                     href="/dashboard" 
-                    className="flex items-center px-3 py-2 text-sm font-medium hover:bg-purple-700 rounded-md transition-colors"
+                    className="px-3 py-2 text-sm text-gray-700 hover:text-primary-600 hover:bg-gray-50 rounded-md"
                     onClick={handleDashboardClick}
-                    aria-label="Dashboard"
                   >
-                    <BookOpenIcon className="h-5 w-5 mr-1" />
-                    Dashboard
+                    <BookOpenIcon className="h-5 w-5" />
                   </Link>
                 )}
                 <Link 
                   href="/notifications" 
-                  className="flex items-center px-3 py-2 text-sm font-medium hover:bg-purple-700 rounded-md transition-colors"
-                  aria-label="Notifications"
+                  className="px-3 py-2 text-sm text-gray-700 hover:text-primary-600 hover:bg-gray-50 rounded-md relative"
                 >
-                  <BellIcon className="h-5 w-5 mr-1" />
-                  <span className="relative">
-                    Notifications
-                    <span className="absolute -top-1 -right-1 h-4 w-4 bg-red-500 rounded-full text-xs flex items-center justify-center">
-                      3
-                    </span>
-                  </span>
+                  <BellIcon className="h-5 w-5" />
+                  <span className="absolute top-1 right-1 h-3 w-3 bg-red-500 rounded-full"></span>
                 </Link>
                 <Link 
                   href="/messages" 
-                  className="flex items-center px-3 py-2 text-sm font-medium hover:bg-purple-700 rounded-md transition-colors"
-                  aria-label="Messages"
+                  className="px-3 py-2 text-sm text-gray-700 hover:text-primary-600 hover:bg-gray-50 rounded-md"
                 >
-                  <ChatBubbleLeftRightIcon className="h-5 w-5 mr-1" />
-                  Messages
+                  <ChatBubbleLeftRightIcon className="h-5 w-5" />
                 </Link>
                 <button 
                   onClick={handleLogout} 
-                  className="flex items-center ml-4 px-4 py-2 text-sm font-medium bg-red-500 hover:bg-red-600 rounded-md transition-colors"
-                  aria-label="Logout"
+                  className="ml-2 px-3 py-2 text-sm text-red-600 hover:text-red-700 hover:bg-red-50 rounded-md"
                 >
-                  <ArrowRightOnRectangleIcon className="h-5 w-5 mr-1" />
-                  Logout
+                  <ArrowRightOnRectangleIcon className="h-5 w-5" />
                 </button>
               </>
             ) : (
               <Link 
                 href="/auth" 
-                className="flex items-center px-4 py-2 text-sm font-medium bg-purple-500 hover:bg-purple-700 rounded-md transition-colors"
-                aria-label="Login"
+                className="px-3 py-2 text-sm text-primary-600 hover:text-primary-700 hover:bg-primary-50 rounded-md"
               >
-                <UserCircleIcon className="h-5 w-5 mr-1" />
-                Login
+                <UserCircleIcon className="h-5 w-5" />
               </Link>
             )}
           </div>
@@ -140,14 +124,12 @@ const Navbar = () => {
           <div className="md:hidden">
             <button 
               onClick={toggleMobileMenu}
-              className="p-2 rounded-md hover:bg-purple-700 transition-colors"
-              aria-label={isMobileMenuOpen ? "Close menu" : "Open menu"}
-              aria-expanded={isMobileMenuOpen}
+              className="p-2 text-gray-700 hover:text-primary-600 hover:bg-gray-50 rounded-md"
             >
               {isMobileMenuOpen ? (
-                <XMarkIcon className="h-6 w-6" />
+                <XMarkIcon className="h-5 w-5" />
               ) : (
-                <Bars3Icon className="h-6 w-6" />
+                <Bars3Icon className="h-5 w-5" />
               )}
             </button>
           </div>
@@ -155,21 +137,14 @@ const Navbar = () => {
 
         {/* Mobile Menu */}
         {isMobileMenuOpen && (
-          <div 
-            className="md:hidden"
-            role="menu"
-            aria-orientation="vertical"
-            aria-labelledby="mobile-menu-button"
-          >
+          <div className="md:hidden border-t">
             <div className="px-2 pt-2 pb-3 space-y-1">
               {authToken ? (
                 <>
                   <Link 
                     href="/" 
-                    className="flex items-center px-3 py-2 text-base font-medium hover:bg-purple-700 rounded-md transition-colors"
+                    className="flex items-center px-3 py-2 text-base text-gray-700 hover:text-primary-600 hover:bg-gray-50 rounded-md"
                     onClick={() => setIsMobileMenuOpen(false)}
-                    role="menuitem"
-                    aria-label="Home"
                   >
                     <HomeIcon className="h-5 w-5 mr-2" />
                     Home
@@ -177,10 +152,8 @@ const Navbar = () => {
                   {user?.role === 'admin' && (
                     <Link 
                       href="/dashboard" 
-                      className="flex items-center px-3 py-2 text-base font-medium hover:bg-purple-700 rounded-md transition-colors"
+                      className="flex items-center px-3 py-2 text-base text-gray-700 hover:text-primary-600 hover:bg-gray-50 rounded-md"
                       onClick={() => setIsMobileMenuOpen(false)}
-                      role="menuitem"
-                      aria-label="Dashboard"
                     >
                       <BookOpenIcon className="h-5 w-5 mr-2" />
                       Dashboard
@@ -188,34 +161,26 @@ const Navbar = () => {
                   )}
                   <Link 
                     href="/notifications" 
-                    className="flex items-center px-3 py-2 text-base font-medium hover:bg-purple-700 rounded-md transition-colors"
+                    className="flex items-center px-3 py-2 text-base text-gray-700 hover:text-primary-600 hover:bg-gray-50 rounded-md"
                     onClick={() => setIsMobileMenuOpen(false)}
-                    role="menuitem"
-                    aria-label="Notifications"
                   >
                     <BellIcon className="h-5 w-5 mr-2" />
                     <span className="relative">
                       Notifications
-                      <span className="absolute -top-1 -right-1 h-4 w-4 bg-red-500 rounded-full text-xs flex items-center justify-center">
-                        3
-                      </span>
+                      <span className="absolute -top-1 -right-1 h-3 w-3 bg-red-500 rounded-full"></span>
                     </span>
                   </Link>
                   <Link 
                     href="/messages" 
-                    className="flex items-center px-3 py-2 text-base font-medium hover:bg-purple-700 rounded-md transition-colors"
+                    className="flex items-center px-3 py-2 text-base text-gray-700 hover:text-primary-600 hover:bg-gray-50 rounded-md"
                     onClick={() => setIsMobileMenuOpen(false)}
-                    role="menuitem"
-                    aria-label="Messages"
                   >
                     <ChatBubbleLeftRightIcon className="h-5 w-5 mr-2" />
                     Messages
                   </Link>
                   <button 
                     onClick={handleLogout}
-                    className="flex items-center w-full px-3 py-2 text-base font-medium bg-red-500 hover:bg-red-600 rounded-md transition-colors"
-                    role="menuitem"
-                    aria-label="Logout"
+                    className="flex items-center w-full px-3 py-2 text-base text-red-600 hover:text-red-700 hover:bg-red-50 rounded-md"
                   >
                     <ArrowRightOnRectangleIcon className="h-5 w-5 mr-2" />
                     Logout
@@ -224,10 +189,8 @@ const Navbar = () => {
               ) : (
                 <Link 
                   href="/auth" 
-                  className="flex items-center px-3 py-2 text-base font-medium bg-purple-500 hover:bg-purple-700 rounded-md transition-colors"
+                  className="flex items-center px-3 py-2 text-base text-primary-600 hover:text-primary-700 hover:bg-primary-50 rounded-md"
                   onClick={() => setIsMobileMenuOpen(false)}
-                  role="menuitem"
-                  aria-label="Login"
                 >
                   <UserCircleIcon className="h-5 w-5 mr-2" />
                   Login
