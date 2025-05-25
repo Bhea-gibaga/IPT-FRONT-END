@@ -10,6 +10,9 @@ import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import { ArrowPathIcon, BookOpenIcon, ClockIcon, UserCircleIcon, CheckCircleIcon, PlusIcon, ExclamationCircleIcon, BookmarkIcon } from '@heroicons/react/24/outline';
 import ProfileModal from "@/components/ProfileModal";
+import Loader from '@/components/loader';
+
+
 
 interface Book {
   id: number;
@@ -331,14 +334,7 @@ const UserDashboard = () => {
   };
 
   if (isLoading || !authToken || (user?.role === 'admin')) {
-    return (
-      <div className="min-h-screen flex items-center justify-center bg-gray-50">
-        <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-primary-600 mx-auto"></div>
-          <p className="mt-4 text-gray-600">Loading your dashboard...</p>
-        </div>
-      </div>
-    );
+    return <Loader fullScreen text="Loading your dashboard..." />;
   }
 
   const filteredBooks = activeTab === "available" 
@@ -540,10 +536,7 @@ const UserDashboard = () => {
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4">
             {loading.books ? (
               <div className="col-span-full">
-                <div className="bg-white rounded-xl p-6 text-center">
-                  <div className="animate-spin rounded-full h-8 w-8 border-t-2 border-b-2 border-indigo-600 mx-auto"></div>
-                  <p className="mt-4 text-slate-500">Loading your reading options...</p>
-                </div>
+                <Loader text="Loading your reading options..." />
               </div>
             ) : filteredBooks.length === 0 ? (
               <div className="col-span-full">
@@ -659,11 +652,8 @@ const UserDashboard = () => {
                 <tbody className="bg-white divide-y divide-slate-200">
                   {loading.borrowed ? (
                     <tr>
-                      <td colSpan={4} className="px-6 py-4 text-center">
-                        <div className="flex justify-center items-center space-x-2">
-                          <div className="animate-spin rounded-full h-5 w-5 border-2 border-indigo-600 border-t-indigo-400"></div>
-                          <span className="text-slate-500">Loading your reading list...</span>
-                        </div>
+                      <td colSpan={4} className="px-6 py-4">
+                        <Loader text="Loading your reading list..." />
                       </td>
                     </tr>
                   ) : borrowedBooks.length === 0 ? (
