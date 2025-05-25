@@ -1,11 +1,12 @@
 const Loader = () => {
-    return <>
-         <div id="loader" className="d-flex justify-content-center align-items-center vh-100">
-            <div className="spinner-border text-primary" role="status">
-                <span className="visually-hidden">Loading...</span>
-            </div>
-         </div>
-    </>
-}
-//
+  return (
+    <div className="fixed inset-0 flex items-center justify-center bg-white bg-opacity-75 z-50">
+      <div className="relative">
+        <div className="w-8 h-8 border-2 border-primary-600 border-t-transparent rounded-full animate-spin"></div>
+        <span className="sr-only">Loading...</span>
+      </div>
+    </div>
+  );
+};
+
 export default Loader;
